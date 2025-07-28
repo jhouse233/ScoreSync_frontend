@@ -1,0 +1,68 @@
+@font-face {
+    font-family: 'Oswald';
+    src: url('../../assets/Oswald-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Quicksand';
+    src: url('../../assets/Quicksand-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+.header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    max-width: 100%;
+    /* margin: 0 auto; */
+    z-index: 10;
+    background: transparent;
+    padding: 24px 40px;
+    /* max-width: 100%; */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header__logo-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header__logo {
+    /* margin-left: 40px; */
+}
+
+.header__access-container {
+    /* margin-left: auto; */
+    /* margin-right: auto; */
+    display: flex;
+    align-items: center;
+    /* gap: 24px; */
+    flex-wrap: wrap;
+    margin-right: 40px;
+
+}
+
+.header__signup-button, .header__login-button, .header__features {
+    /* margin-right: 80px; */
+    /* font-family: 'Quicksand', sans-serif; */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: transparent;
+}
+
+.header__signup-button:hover, .header__login-button:hover, .header__features:hover {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-decoration: underline;
+}

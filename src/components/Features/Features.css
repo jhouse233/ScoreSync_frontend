@@ -1,0 +1,35 @@
+.features {
+    background-color: #f3f3f3;
+    color: #101926;
+    padding: 80px 24px;
+    text-align: center;
+  }
+  
+  .features__tabs {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+  
+  .features__panel {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 24px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .features__title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.75rem;
+    margin-bottom: 16px;
+  }
+  
+  .features__text {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+  }

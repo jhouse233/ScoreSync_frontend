@@ -1,0 +1,15 @@
+.introduction {
+    background-image: url('../../assets/main_background.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+    /* padding: 0 24px; */
+    /* padding-top: 80px; */
+}
