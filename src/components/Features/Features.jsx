@@ -48,43 +48,56 @@ export default function Features(){
     }
     return(
         <section className="features">
-            <div className="features__tabs">
-                <FeaturesTabButton 
-                    alt='Write'
-                    defaultImg={defaultWrite}
-                    hoverImg={hoverWrite}
-                    activeImg={activeWrite}
-                    isActive={activeTab === 'write'}
-                    onClick={() => setActiveTab('write')}
-                />
-                <FeaturesTabButton 
-                    alt='Review'
-                    defaultImg={defaultReview}
-                    hoverImg={hoverReview}
-                    activeImg={activeReview}
-                    isActive={activeTab === 'review'}
-                    onClick={() => setActiveTab('review')}
-                />
-                <FeaturesTabButton 
-                    alt='Refine'
-                    defaultImg={defaultRefine}
-                    hoverImg={hoverRefine}
-                    activeImg={activeRefine}
-                    isActive={activeTab === 'refine'}
-                    onClick={() => setActiveTab('refine')}
-                />
-                <FeaturesTabButton 
-                    alt='Together'
-                    defaultImg={defaultTogether}
-                    hoverImg={hoverTogether}
-                    activeImg={activeTogether}
-                    isActive={activeTab === 'together'}
-                    onClick={() => setActiveTab('together')}
-                />
+            <div className="features__heading">
+                <h3 className="features__heading-title">Write.<span className='features__tagline-review'>Review.</span><span className='features__tagline-refine'>Refine.</span>Together.</h3>
+                <p className="features__heading-paragraph">
+                    ScoreSync makes writing music social, seamless, and scalable. <br />
+                    Collaborate in real-time with musicians, get feedback instantly <br />
+                    and manage every version of your composition in one place. Whether you're <br/>
+                    scoring solo or creating with a team, ScoreSync gives you the tools to stay in tune with your <br/>
+                    creative process
+
+                </p>
             </div>
-            <div className="features__panel">
-                <h3 className="features__title">{tabContent[activeTab].title}</h3>
-                <p className="features__text">{tabContent[activeTab].text}</p>
+            <div className="features__tabs-panel">
+                <div className="features__tabs">
+                    <FeaturesTabButton 
+                        alt='Write'
+                        defaultImg={defaultWrite}
+                        hoverImg={hoverWrite}
+                        activeImg={activeWrite}
+                        isActive={activeTab === 'write'}
+                        onClick={() => setActiveTab('write')}
+                    />
+                    <FeaturesTabButton 
+                        alt='Review'
+                        defaultImg={defaultReview}
+                        hoverImg={hoverReview}
+                        activeImg={activeReview}
+                        isActive={activeTab === 'review'}
+                        onClick={() => setActiveTab('review')}
+                    />
+                    <FeaturesTabButton 
+                        alt='Refine'
+                        defaultImg={defaultRefine}
+                        hoverImg={hoverRefine}
+                        activeImg={activeRefine}
+                        isActive={activeTab === 'refine'}
+                        onClick={() => setActiveTab('refine')}
+                    />
+                    <FeaturesTabButton 
+                        alt='Together'
+                        defaultImg={defaultTogether}
+                        hoverImg={hoverTogether}
+                        activeImg={activeTogether}
+                        isActive={activeTab === 'together'}
+                        onClick={() => setActiveTab('together')}
+                    />
+                </div>
+                <div className="features__panel">
+                    <h3 className="features__title">{tabContent[activeTab].title}</h3>
+                    <p className="features__text">{tabContent[activeTab].text}</p>
+                </div>
             </div>
         </section>
     )

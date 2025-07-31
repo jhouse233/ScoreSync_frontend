@@ -1,0 +1,74 @@
+.toolbar {
+    background-color: #101926;
+    outline: none;
+}
+
+.toolbar__tab {
+    border: none;
+    background-color: transparent;
+
+}
+.toolbar__tab:focus {
+    border: none;
+    outline: none;
+
+}
+
+.toolbar__tab:hover {
+    border: none;
+
+    color: #EDCD97;
+    box-shadow: 0 0 0 2px #c49c48;
+}
+
+.toolbar__tab--active {
+    color: #EDCD97;
+    outline: none;
+    text-decoration: underline;
+    
+}
+
+.toolbar__divider-icon {
+    margin: 0 12px;
+    display: flex;
+    align-items: center;
+}
+
+/* Articulation */
+.toolbar__articulation-buttons {
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+    padding: 0;
+}
+
+.toolbar__group-articulations {
+    display: flex;
+    align-items: center;
+    margin-left: 85px;
+    /* border: 1px solid red; */
+
+    /* height: 24px; */
+}
+
+.toolbar__expression-buttons {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin-left: 85px;
+}
+
+.toolbar__group-expression {
+    display: flex;
+    align-items: center;
+}
+
+.toolbar__group-piano {
+    display: flex;
+    align-items: center;
+}
+
+
+.toolbar__button {
+    
+}

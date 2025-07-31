@@ -13,7 +13,7 @@ export default function FeaturesTabButton({alt, defaultImg, hoverImg, activeImg,
     return (
         <img src={getImage()}
             alt={alt} 
-            className="features-tab-button"
+            className="features-tab__button"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onClick={onClick}

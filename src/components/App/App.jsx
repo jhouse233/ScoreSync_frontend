@@ -6,6 +6,11 @@ import Header from '../Header/Header.jsx';
 import Features from '../Features/Features.jsx';
 import Introduction from '../Introduction/Introduction.jsx';
 
+import EditorHeader from '../Editor/EditorHeader/EditorHeader.jsx';
+import Toolbar from '../Editor/Toolbar/Toolbar.jsx';
+
+
+
 function App() {
 
   return (
@@ -14,6 +19,8 @@ function App() {
         <Header/>
         <Introduction/>
         <Features/>
+        <EditorHeader />
+        <Toolbar />
 
 
       </div>
