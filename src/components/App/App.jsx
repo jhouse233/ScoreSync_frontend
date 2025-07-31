@@ -8,6 +8,8 @@ import Introduction from '../Introduction/Introduction.jsx';
 
 import EditorHeader from '../Editor/EditorHeader/EditorHeader.jsx';
 import Toolbar from '../Editor/Toolbar/Toolbar.jsx';
+import StaffCanvas from '../Editor/StaffCanvas/StaffCanvas.jsx';
+import Keyboard from '../Editor/Keyboard/Keyboard.jsx';
 
 
 
@@ -21,6 +23,8 @@ function App() {
         <Features/>
         <EditorHeader />
         <Toolbar />
+        <StaffCanvas />
+        <Keyboard />
 
 
       </div>

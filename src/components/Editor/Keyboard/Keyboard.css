@@ -1,0 +1,26 @@
+.keyboard {
+    width: 100%;
+    background-color: #fafafa;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin: 0;
+    padding: 0;
+
+    position: relative;
+}
+  
+.white-keys {
+    display: flex;
+    z-index: 1;
+    /* transform: rotate(180deg); */
+}
+  
+.black-keys {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    pointer-events: none;
+    z-index: 2;
+}

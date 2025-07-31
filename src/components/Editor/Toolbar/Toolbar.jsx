@@ -63,6 +63,8 @@ import ottavabassa from '../../../assets/ottavabassa.svg';
 import quindicesima from '../../../assets/quindicesima.svg';
 import quindicesimabassa from '../../../assets/quindicesimabassa.svg';
 
+const tabsButtons = ['Note', 'Articulation', 'Expression', 'Measure', 'Text']
+
 const noteButtons = [
     { icon: sixtyFourthNote, alt: '64th note' },
     { icon: thirtySecondNote, alt: '32nd note' },
@@ -154,10 +156,6 @@ const toolbarConfig = {
         { key: 'octaveShift', buttons: octaveShiftButtons, className: 'toolbar__group-octave-shift-buttons' },
     ]
 };
-
-
-
-const tabsButtons = ['Note', 'Articulation', 'Expression', 'Measure', 'Text']
 
 export default function Toolbar(){
     const [selectedNote, setSelectedNote] = useState(null);

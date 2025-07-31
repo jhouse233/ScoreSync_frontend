@@ -1,0 +1,8 @@
+.black__key {
+    position: absolute;
+    /* width: 24px; */
+    /* height: 70; */
+    z-index: 2;
+    pointer-events: auto;
+    /* border: 1px solid red; */
+}
