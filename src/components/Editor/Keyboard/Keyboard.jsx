@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Whitekey from './Whitekey/Whitekey';
 import Blackkey from './BlackKey/Blackkey';
@@ -56,13 +56,27 @@ const keys = [
 ]
 
 export default function Keyboard({ onKeyPress }) {
+    console.log('Keyboard received onKeyPress', onKeyPress);
+    const [selectedKey, setSelectedKey] = useState(null);
+
+    const handleKeyClick = (note) => {
+        console.log('Key clicked', note);
+        setSelectedKey(note);
+        onKeyPress?.(note);
+    }
+
     return (
         <div className="keyboard">
             <div className="white-keys">
                 {keys
                     .filter(key => !key.isSharp)
                     .map((key) => (
-                        <Whitekey key={key.note} note={key.note} onClick={onKeyPress} />
+                        <Whitekey 
+                            key={key.note} 
+                            note={key.note} 
+                            onClick={handleKeyClick} 
+                            isSelected={selectedKey === key.note}
+                        />
                     ))}
             </div>
             <div className="black-keys">
@@ -80,21 +94,15 @@ export default function Keyboard({ onKeyPress }) {
 
                         const whiteKeyWidth = 123;
                         const blackKeyWidth = 15;
-                        const leftOffset = (leftIndex * whiteKeyWidth + whiteKeyWidth * 0.75 - blackKeyWidth) / 2
-                        // const whiteIndex = keys
-                        //     .filter(k => !k.isSharp)
-                        //     .findIndex(w => w.note === key.note.replace('#', ''));
-
-                        // if (whiteIndex === -1) return null;
-
-                        // const leftOffset = whiteIndex * 40 + 28;
+                        const leftOffset = (leftIndex * whiteKeyWidth + whiteKeyWidth * 0.75 - blackKeyWidth) / 2;
 
                         return (
                             <Blackkey
                                 key={key.note}
                                 note={key.note}
-                                onClick={onKeyPress}
+                                onClick={handleKeyClick}
                                 style={{ left: `${leftOffset}px` }}
+                                isSelected={selectedKey === key.note}
                             />
                         );
                     })}
