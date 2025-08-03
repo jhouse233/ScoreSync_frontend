@@ -10,10 +10,16 @@ import EditorHeader from '../Editor/EditorHeader/EditorHeader.jsx';
 import Toolbar from '../Editor/Toolbar/Toolbar.jsx';
 import StaffCanvas from '../Editor/StaffCanvas/StaffCanvas.jsx';
 import Keyboard from '../Editor/Keyboard/Keyboard.jsx';
-
+import PianoInput from '../Editor/PianoInput/PianoInput.jsx';
 
 
 function App() {
+
+  const [isKeyBoardVisible, setIsKeyBoardVisible] = useState(false);
+
+  const toggleKeyboard = () => {
+    setIsKeyBoardVisible(prev => !prev);
+  }
 
   return (
     <div className="page">
@@ -22,10 +28,17 @@ function App() {
         <Introduction/>
         <Features/>
         <EditorHeader />
-        <Toolbar />
+        <Toolbar 
+          isKeyBoardVisible={isKeyBoardVisible}
+          toggleKeyboard={toggleKeyboard}
+        />
         <StaffCanvas />
-        <Keyboard />
-
+ 
+        {isKeyBoardVisible && (
+          <div className="keyboard-overlay">
+            <PianoInput onClose={toggleKeyboard} />
+          </div>
+        )}
 
       </div>
     </div>

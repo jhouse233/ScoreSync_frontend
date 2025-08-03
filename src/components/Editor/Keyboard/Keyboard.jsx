@@ -56,7 +56,7 @@ const keys = [
 ]
 
 export default function Keyboard({ onKeyPress }) {
-    console.log('Keyboard received onKeyPress', onKeyPress);
+    console.log('Keyboard received onKeyPress', typeof onKeyPress);
     const [selectedKey, setSelectedKey] = useState(null);
 
     const handleKeyClick = (note) => {

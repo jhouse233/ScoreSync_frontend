@@ -4,7 +4,8 @@
     background-color: #fafafa;
     border: 1px solid #444;
     position: relative;
-
+    display: flex;
+    flex-grow: 1;
 }
 
 staff__canvas-placeholder {

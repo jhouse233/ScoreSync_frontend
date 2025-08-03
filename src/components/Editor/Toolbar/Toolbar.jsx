@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 
 import './Toolbar.css';
 import ToolbarButton from './ToolBarButton';
+import PianoToggleButton from './ToolbarActionButtons/PianoToggleButton';
+
 // Note images
 import sixtyFourthNote from '../../../assets/sixty-fourth-note.svg';
 import thirtySecondNote from '../../../assets/thirty-second-note.svg';
@@ -63,7 +65,18 @@ import ottavabassa from '../../../assets/ottavabassa.svg';
 import quindicesima from '../../../assets/quindicesima.svg';
 import quindicesimabassa from '../../../assets/quindicesimabassa.svg';
 
-const tabsButtons = ['Note', 'Articulation', 'Expression', 'Measure', 'Text']
+import undo from '../../../assets/undo.svg';
+import redo from '../../../assets/redo.svg';
+import cut from '../../../assets/cut.svg';
+import copy from '../../../assets/copy.svg';
+import paste from '../../../assets/paste.svg';
+import zoomin from '../../../assets/zoomin.svg';
+import zoomout from '../../../assets/zoomout.svg';
+
+const tabsButtons = ['Note', 'Articulation', 'Expression', 'Measure', 'Text'];
+// const actionButtons = [
+//     { icon: undo}
+// ]
 
 const noteButtons = [
     { icon: sixtyFourthNote, alt: '64th note' },
@@ -157,25 +170,35 @@ const toolbarConfig = {
     ]
 };
 
-export default function Toolbar(){
+export default function Toolbar({ isKeyBoardVisible, toggleKeyboard }){
     const [selectedNote, setSelectedNote] = useState(null);
     const [activeTab, setActiveTab] = useState('Note')
 
     const handleSelectedNote = (note) => {
         setSelectedNote(note);
     }
+
+
     return (
         <div className="toolbar">
-            <div className="toolbar__tabs">
-                {tabsButtons.map((tab) => (
-                    <button 
-                        key={tab}
-                        onClick={() => setActiveTab(tab)}
-                        className={`toolbar__tab ${activeTab === tab ? 'toolbar__tab--active' : ''}`}
-                        >
-                            {tab}
-                    </button>
-                ))}
+            <div className="toolbar__tabs-row">
+                <div className="toolbar__tabs">
+                    {tabsButtons.map((tab) => (
+                        <button 
+                            key={tab}
+                            onClick={() => setActiveTab(tab)}
+                            className={`toolbar__tab ${activeTab === tab ? 'toolbar__tab--active' : ''}`}
+                            >
+                                {tab}
+                        </button>
+                    ))}
+                </div>
+                <div className="toolbar__actions">
+                    <PianoToggleButton 
+                        isActive={isKeyBoardVisible}
+                        onClick={toggleKeyboard}
+                    />
+                </div>
             </div>
             {toolbarConfig[activeTab] && (
                 <div className={`toolbar__${activeTab.toLowerCase()}-buttons`}>
