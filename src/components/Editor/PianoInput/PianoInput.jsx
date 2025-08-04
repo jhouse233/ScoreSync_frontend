@@ -3,7 +3,9 @@ import Keyboard from '../Keyboard/Keyboard';
 import useSynth from '../Audio/useSynth';
 import * as Tone from 'tone';
 
+import './PianoInput.css';
 
+import downArrowIcon from '../../../assets/downarrow.svg';
 
 export default function PianoInput({ onClose }) {
     const { playNote } = useSynth();
@@ -23,16 +25,10 @@ export default function PianoInput({ onClose }) {
 
     return (
         <div className="piano-input">
-            <button type='button' onClick={onClose} className="keyboard__close-button">
-                X
+            <button type='button' onClick={onClose} className="piano__close-button">
+                <img src={downArrowIcon} alt="Close Button" className='piano__close-button-icon' />
             </button>
-            {/* {!audioStarted ? (
-                // <button onClick={startAudio}>Start Audio</button>
-            ) : (
-                <Keyboard onKeyPress={handleKeyPress} />
-            )} */}
             <Keyboard onKeyPress={handleKeyPress} />
-            
         </div>
 
     )

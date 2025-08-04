@@ -5,6 +5,18 @@ import Blackkey from './BlackKey/Blackkey';
 import './Keyboard.css';
 
 const keys = [
+    { note: 'C1', isSharp: false },
+    { note: 'C#1', isSharp: true },
+    { note: 'D1', isSharp: false },
+    { note: 'D#1', isSharp: true },
+    { note: 'E1', isSharp: false },
+    { note: 'F1', isSharp: false },
+    { note: 'F#1', isSharp: true },
+    { note: 'G1', isSharp: false },
+    { note: 'G#1', isSharp: true },
+    { note: 'A1', isSharp: false },
+    { note: 'A#1', isSharp: true },
+    { note: 'B1', isSharp: false },
     { note: 'C2', isSharp: false },
     { note: 'C#2', isSharp: true },
     { note: 'D2', isSharp: false },
@@ -53,6 +65,18 @@ const keys = [
     { note: 'A5', isSharp: false },
     { note: 'A#5', isSharp: true },
     { note: 'B5', isSharp: false },
+    { note: 'C6', isSharp: false },
+    { note: 'C#6', isSharp: true },
+    { note: 'D6', isSharp: false },
+    { note: 'D#6', isSharp: true },
+    { note: 'E6', isSharp: false },
+    { note: 'F6', isSharp: false },
+    { note: 'F#6', isSharp: true },
+    { note: 'G6', isSharp: false },
+    { note: 'G#6', isSharp: true },
+    { note: 'A6', isSharp: false },
+    { note: 'A#6', isSharp: true },
+    { note: 'B6', isSharp: false },
 ]
 
 export default function Keyboard({ onKeyPress }) {

@@ -4,11 +4,14 @@ import whiteKeyImage from '../../../../assets/whitekey.svg';
 
 export default function Whitekey({ note, onClick, isSelected }){
     return (
-        <img 
-            src={whiteKeyImage} 
-            alt="White Key" 
-            className={`white__key ${isSelected ? 'white__key--selected' : ''}`} 
-            onClick={() => onClick(note)}    
-        />
+        <div className="white__key-wrapper">
+            <img 
+                src={whiteKeyImage} 
+                alt="White Key" 
+                className={`white__key ${isSelected ? 'white__key--selected' : ''}`} 
+                onClick={() => onClick(note)}    
+            />
+            <span className="white__key-label">{note}</span>
+        </div>
     )
 }

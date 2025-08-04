@@ -1,0 +1,12 @@
+.dashboard-sidebar {
+    display: flex;
+    flex-direction: column;
+    padding: 100px;
+    /* border: 20px solid black; */
+    background-color: white;
+    
+}
+
+.dashboard-sidebar__title {
+    color: black;
+}

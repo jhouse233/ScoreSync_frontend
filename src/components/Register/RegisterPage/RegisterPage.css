@@ -1,0 +1,43 @@
+.register-page {
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.register-page__image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* display: block; */
+}
+
+.register-page__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin-left: 300px;
+
+}
+
+.register__form-card {
+    background: transparent;
+    padding: 40px;
+    max-width: 400px;
+    width: 90%;
+    pointer-events: auto;
+}

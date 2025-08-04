@@ -40,3 +40,10 @@
   .keyboard-overlay.hidden {
     transform: translateY(100%);
   }
+
+.keyboard-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: no-wrap;
+    width: 100%;
+}

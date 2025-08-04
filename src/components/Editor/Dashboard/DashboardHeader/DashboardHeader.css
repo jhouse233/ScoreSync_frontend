@@ -1,0 +1,19 @@
+.dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 100%;
+    background-color: #101926;
+    padding: 24px 40px;
+    /* gap: 16px; */
+    overflow: hidden;
+}
+
+.dashboard-header__logo-button {
+    background: transparent;
+}
+
+.dashboard-header__image-button {
+    background: transparent;
+}

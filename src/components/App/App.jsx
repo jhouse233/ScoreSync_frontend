@@ -11,11 +11,16 @@ import Toolbar from '../Editor/Toolbar/Toolbar.jsx';
 import StaffCanvas from '../Editor/StaffCanvas/StaffCanvas.jsx';
 import Keyboard from '../Editor/Keyboard/Keyboard.jsx';
 import PianoInput from '../Editor/PianoInput/PianoInput.jsx';
-
+import LoginPage from '../Login/LoginPage/LoginPage.jsx';
+import RegisterPage from '../Register/RegisterPage/RegisterPage.jsx';
+import DashboardPage from '../Editor/Dashboard/DashboardPage/DashboardPage.jsx';
 
 function App() {
 
+  // const [activeModal, setActiveModal] = useState(null);
+
   const [isKeyBoardVisible, setIsKeyBoardVisible] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
 
   const toggleKeyboard = () => {
     setIsKeyBoardVisible(prev => !prev);
@@ -27,6 +32,9 @@ function App() {
         <Header/>
         <Introduction/>
         <Features/>
+        <LoginPage />
+        <RegisterPage />
+        <DashboardPage />
         <EditorHeader />
         <Toolbar 
           isKeyBoardVisible={isKeyBoardVisible}
@@ -36,7 +44,9 @@ function App() {
  
         {isKeyBoardVisible && (
           <div className="keyboard-overlay">
-            <PianoInput onClose={toggleKeyboard} />
+            <div className="keyboard-scroll">
+              <PianoInput onClose={toggleKeyboard} />
+            </div>
           </div>
         )}
 
