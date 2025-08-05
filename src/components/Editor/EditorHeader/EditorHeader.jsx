@@ -1,4 +1,8 @@
 import './EditorHeader.css';
+import ModalWithForm from '../../ModalWithForm/ModalWithForm';
+import { useState } from 'react';
+import useDropdown from '../../../hooks/useDropdown';
+import DropdownMenu from '../../DropdownMenu/DropdownMenu';
 
 // Import Images
 import logo from '../../../assets/logo.svg';
@@ -10,6 +14,25 @@ import user from '../../../assets/user.svg';
 
 
 export default function EditorHeader(){
+
+    const [isActive, setIsActive] = useState(false);
+    
+    const handleOpen = () => setIsActive(true);
+    const handleClose = () => setIsActive(false);
+
+    const handleSubmit = e => {
+        e.preventDefault();
+        onSubmit(e);
+        handleClose();
+    }
+
+    const {
+        isOpen: isUserMenuOpen,
+        toggle: toggleUserMenu,
+        close: closeUserMenu,
+        dropdownRef: userDropdownRef
+    } = useDropdown();
+    
     const projectTools = [
         { 
             key: 'logo', 
@@ -112,25 +135,74 @@ export default function EditorHeader(){
         }
     ];
 
+    
+
 
 
     return (
-        <header className="editor-header">
-            <div className="editor-header__project-tools">
-                {projectTools.map(({ key, content }) => (
-                    <div key={key} className={`editor-header__${key}`}>
-                        {content}
-                    </div>
-                ))}
-            </div>
+        <>
+            <header className="editor-header">
+                <div className="editor-header__project-tools">
+                    {projectTools.map(({ key, content }) => (
+                        <div key={key} className={`editor-header__${key}`}>
+                            {content}
+                        </div>
+                    ))}
+                </div>
 
-            <div className="editor-header__user-tools">
-                {userTools.map(({ key, content }) => (
-                    <div key={key} className={`editor-header__${key}`}>
-                        {content}
+                <div className="editor-header__user-tools">
+                    {userTools
+                        .filter(({ key}) => key !== 'user')
+                        .map(({ key, content }) => (
+                            <div key={key} className={`editor-header__${key}`}>
+                                {content}
+                            </div>
+                        ))
+                    }
+                
+                    <div className="editor-header__user">
+                        <button 
+                            type='button'
+                            className="editor-header__user-button"
+                            onClick={toggleUserMenu}
+                        >
+                            <img 
+                                src={user} 
+                                alt="User" 
+                                className="editor-header__user-image"
+                            />
+                        </button>
+                        <DropdownMenu
+                            isOpen={isUserMenuOpen}
+                            onClose={closeUserMenu}
+                            title='User Menu'
+                        >
+                            <div ref={userDropdownRef} className="user__button-group">
+                                <button 
+                                    className="user__settings-button"
+                                    type='button'
+                                    onClick={() => {
+                                        console.log('Settings clicked')
+                                    }} 
+                                >
+                                    Settings
+                                </button>
+                                <button 
+                                    className="user__logout-button"
+                                    type='button'
+                                    onClick={() => {
+                                        console.log('Logout button clicked')
+                                    }}    
+                                >
+                                    Logout
+                                </button>
+                            </div>
+                        </DropdownMenu>
                     </div>
-                ))}
-            </div>
-        </header>
+                </div>
+
+            </header>
+            
+        </>
     )
 }

@@ -7,7 +7,7 @@
     background-color: #101926;
     padding: 24px 40px;
     /* gap: 16px; */
-    overflow: hidden;
+    /* overflow: hidden; */
     box-sizing: border-box;
 }
 .editor-header__project-tools {
@@ -40,7 +40,7 @@
     align-items: center;
     gap: 24px;
     flex-shrink: 0;
-    margin-right: 80px;
+    /* margin-right: 80px; */
 }
 
 .editor-header__save-history-button {
@@ -58,4 +58,19 @@
     padding: 0;
     display: flex;
     align-items: center;
+}
+
+/* User Icon */
+
+.user__button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.editor-header__user {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

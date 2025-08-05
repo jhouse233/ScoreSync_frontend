@@ -14,6 +14,7 @@ import PianoInput from '../Editor/PianoInput/PianoInput.jsx';
 import LoginPage from '../Login/LoginPage/LoginPage.jsx';
 import RegisterPage from '../Register/RegisterPage/RegisterPage.jsx';
 import DashboardPage from '../Editor/Dashboard/DashboardPage/DashboardPage.jsx';
+import EditorLayout from '../Editor/EditorLayout/EditorLayout.jsx';
 
 function App() {
 
@@ -35,11 +36,14 @@ function App() {
         <LoginPage />
         <RegisterPage />
         <DashboardPage />
-
-        <StaffCanvas 
+        <EditorLayout 
           isKeyBoardVisible={isKeyBoardVisible}
           toggleKeyboard={toggleKeyboard}
         />
+        {/* <StaffCanvas 
+          isKeyBoardVisible={isKeyBoardVisible}
+          toggleKeyboard={toggleKeyboard}
+        /> */}
  
         {isKeyBoardVisible && (
           <div className="keyboard-overlay">
