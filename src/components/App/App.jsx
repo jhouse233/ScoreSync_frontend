@@ -35,12 +35,11 @@ function App() {
         <LoginPage />
         <RegisterPage />
         <DashboardPage />
-        <EditorHeader />
-        <Toolbar 
+
+        <StaffCanvas 
           isKeyBoardVisible={isKeyBoardVisible}
           toggleKeyboard={toggleKeyboard}
         />
-        <StaffCanvas />
  
         {isKeyBoardVisible && (
           <div className="keyboard-overlay">

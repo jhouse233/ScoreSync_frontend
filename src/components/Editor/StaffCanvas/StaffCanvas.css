@@ -1,10 +1,11 @@
 .staff__canvas {
     width: 100%;
-    min-height: 1200px;
     background-color: #fafafa;
     border: 1px solid #444;
     position: relative;
     display: flex;
+    flex-direction: column;
+    height: 100%;
 
 }
 

@@ -8,6 +8,7 @@
     padding: 24px 40px;
     /* gap: 16px; */
     overflow: hidden;
+    box-sizing: border-box;
 }
 .editor-header__project-tools {
     display: flex;
