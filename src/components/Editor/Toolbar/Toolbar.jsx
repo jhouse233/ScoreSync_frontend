@@ -60,10 +60,21 @@ import pedaljog from '../../../assets/pedaljog.svg';
 import accelerando from '../../../assets/accelerando.svg';
 import ritardando from '../../../assets/ritardando.svg';
 
+// Octave Changes
 import ottava from '../../../assets/ottava.svg';
 import ottavabassa from '../../../assets/ottavabassa.svg';
 import quindicesima from '../../../assets/quindicesima.svg';
 import quindicesimabassa from '../../../assets/quindicesimabassa.svg';
+
+// Measure and clef images
+import removeMeasure from '../../../assets/removemeasure.svg';
+import addMeasure from '../../../assets/addmeasure.svg';
+import insertMeasure from '../../../assets/insertmeasure.svg';
+import trebleClef from '../../../assets/trebleclef.svg';
+import bassClef from '../../../assets/basscleff.svg';
+import metronome from '../../../assets/metronome.svg';
+import barline from '../../../assets/barline.svg';
+import doubleBarline from '../../../assets/doublebarline.svg';
 
 import undo from '../../../assets/undo.svg';
 import redo from '../../../assets/redo.svg';
@@ -152,6 +163,24 @@ const octaveShiftButtons = [
     { icon: quindicesimabassa, alt: 'quindicesima bassa'},
 ];
 
+const measureEditButtons =[
+    { icon: removeMeasure, alt: 'remove measure'},
+    { icon: addMeasure, alt: 'add measure'},
+    { icon: insertMeasure, alt: 'insert measure'},
+];
+
+const clefChangeButtons = [
+    { icon: trebleClef, alt: 'treble clef'},
+    { icon: bassClef, alt: 'bass clef'},
+    { icon: metronome, alt: 'metronome'},
+];
+
+const barlineChangeButtons = [
+    { icon: barline, alt: 'barline'}, 
+    { icon: doubleBarline, alt: 'double barline'}
+];
+
+
 const toolbarConfig = {
     Note: [
         { key: 'notes', buttons: noteButtons, className: 'toolbar__group-notes' },
@@ -167,6 +196,11 @@ const toolbarConfig = {
         { key: 'piano', buttons: pianoExpressionButtons, className: 'toolbar__group-piano' },
         { key: 'tempo', buttons: tempoExpressionButtons, className: 'toolbar__group-tempo-expression-buttons' },
         { key: 'octaveShift', buttons: octaveShiftButtons, className: 'toolbar__group-octave-shift-buttons' },
+    ],
+    Measure: [
+       { key: 'measure', buttons: measureEditButtons, className: 'toolbar_group-measure' },
+       { key: 'clef', buttons: clefChangeButtons, className: 'toolbar__group-clef' },
+       { key: 'barline', buttons: barlineChangeButtons, className: 'toolbar__group-barline'}
     ]
 };
 
