@@ -21,18 +21,18 @@ export default function StaffCanvas() {
         stave.addClef('treble').addTimeSignature('4/4');
         stave.setContext(context).draw();
 
-        const notes = [
-            new VF.StaveNote({ keys: ['c/4'], duration: 'q'}),
-            new VF.StaveNote({ keys: ['d/4'], duration: 'q'}),
-            new VF.StaveNote({ keys: ['e/4'], duration: 'q'}),
-            new VF.StaveNote({ keys: ['f/4'], duration: 'q'}),
-        ];
+        // const notes = [
+        //     new VF.StaveNote({ keys: ['c/4'], duration: 'q'}),
+        //     new VF.StaveNote({ keys: ['d/4'], duration: 'q'}),
+        //     new VF.StaveNote({ keys: ['e/4'], duration: 'q'}),
+        //     new VF.StaveNote({ keys: ['f/4'], duration: 'q'}),
+        // ];
 
-        const voice = new VF. Voice({ num_beats: 4, beat_value: 4 });
-        voice.addTickables(notes);
+        // const voice = new VF. Voice({ num_beats: 4, beat_value: 4 });
+        // voice.addTickables();
 
-        new VF.Formatter().joinVoices([voice]).format([voice], 400);
-        voice.draw(context, stave);
+        // new VF.Formatter().joinVoices([voice]).format([voice], 400);
+        // voice.draw(context, stave);
     }, []);
 
     return (
