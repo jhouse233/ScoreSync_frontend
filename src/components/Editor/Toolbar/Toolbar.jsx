@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useScore } from '../../../contexts/ScoreContext';
 
 import './Toolbar.css';
 import ToolbarButton from './ToolBarButton';
@@ -204,13 +205,74 @@ const toolbarConfig = {
     ]
 };
 
+
+
 export default function Toolbar({ isKeyBoardVisible, toggleKeyboard }){
     const [selectedNote, setSelectedNote] = useState(null);
     const [activeTab, setActiveTab] = useState('Note')
 
-    const handleSelectedNote = (note) => {
-        setSelectedNote(note);
+
+    const {
+        selectedDuration,
+        setSelectedDuration,
+        selectedAccidental,
+        setSelectedAccidental,
+        selectedArticulation,
+        setSelectedArticulation
+    } = useScore();
+
+    const handleSelectedNote = (alt, groupKey) => {
+        switch (groupKey) {
+            case 'notes':
+            case 'rests':
+                const durationMap = {
+                    '64th note': '64',
+                    '32nd note': '32',
+                    '16th note': '16',
+                    '8th note': '8',
+                    'quarter note': 'q',
+                    'half note': 'h',
+                    'whole note': 'w',
+
+                    '64th rest': '64r',
+                    '32nd rest': '32r',
+                    '16th rest': '16r',
+                    '8th rest': '8r',
+                    'quarter rest': 'qr',
+                    'half rest': 'hr',
+                    'whole rest': 'wr',
+                };
+                setSelectedDuration(durationMap[alt] || null);
+                break;
+
+            case 'accidentals':
+                const accidentalMap = {
+                    'natural': 'n',
+                    'sharp': '#',
+                    'flat': 'b',
+                };
+
+                const newAccidental = accidentalMap[alt];
+                setSelectedAccidental(
+                    selectedAccidental === newAccidental ? null : newAccidental
+                );
+                break;
+            
+            case 'articulations':
+                setSelectedArticulation(
+                    selectedArticulation === alt ? null : alt
+                );
+                break;
+
+            default:
+                console.log(`Unhandled group key: ${groupKey}`)
+                break;
+            
+        }
     }
+
+
+
 
 
     return (
@@ -244,7 +306,7 @@ export default function Toolbar({ isKeyBoardVisible, toggleKeyboard }){
                                         key={`${group.key}-${idx}`}
                                         icon={button.icon}
                                         alt={button.alt}
-                                        onClick={() => handleSelectedNote(button.alt)}
+                                        onClick={() => handleSelectedNote(button.alt, group.key)}
                                     />
                                 ))}
                             </div>
@@ -255,128 +317,6 @@ export default function Toolbar({ isKeyBoardVisible, toggleKeyboard }){
                     ))}
                 </div>
             )}
-            {/* {activeTab === 'Note' && (
-                <div className="toolbar__note-buttons">
-                    <div className="toolbar__group toolbar__group-notes">
-                        {noteButtons.map((button, index) => (
-                            <ToolbarButton 
-                                key={index}
-                                icon={button.icon}
-                                alt={button.alt}
-                                onClick={() => handleSelectedNote(button.alt)}
-                                isSelected={selectedNote === button.alt}
-                            />
-                        ))}
-                    </div>
-                    <img src={miniDivider} alt="Divider" className="toolbar__divider-icon" />
-                    <div className="toolbar__group toolbar__group-rests">
-                        {restButtons.map((button, index) => (
-                            <ToolbarButton 
-                                key={`rest-${index}`}
-                                icon={button.icon}
-                                alt={button.alt}
-                                onClick={() => handleSelectedNote(button.alt)}
-                                isSelected={selectedNote === button.alt}
-                            />
-                        ))}
-                    </div>
-                    <img src={miniDivider} alt="Divider" className="toolbar__divider-icon" />
-
-                    <div className="toolbar__group toolbar__group-accidental">
-                        {accidentalButtons.map((button, index) => (
-                            <ToolbarButton 
-                                key={`rest-${index}`}
-                                icon={button.icon}
-                                alt={button.alt}
-                                onClick={() => handleSelectedNote(button.alt)}
-                                isSelected={selectedNote === button.alt}
-                            />
-                        ))}
-                    </div>
-                    <img src={miniDivider} alt="Divider" className="toolbar__divider-icon" />
-                </div>
-            )}
-            {activeTab === 'Articulation' && (
-                <div className="toolbar__articulation-buttons">
-                    <div className="toolbar__group toolbar__group-articulations">
-                        {articulationButtons.map((button, index) => (
-                            <ToolbarButton 
-                                key={index}
-                                icon={button.icon}
-                                alt={button.alt}
-                                onClick={() => handleSelectedNote(button.alt)}
-                                isSelected={selectedNote === button.alt}
-                            />
-                        ))}
-                    </div>
-                    <img src={miniDivider} alt="Divider" className="toolbar__divider-icon" />
-                    <div className="toolbar__group toolbar__group-inflection">
-                        {inflectionButtons.map((button, index) => (
-                            <ToolbarButton 
-                                key={`rest-${index}`}
-                                icon={button.icon}
-                                alt={button.alt}
-                                onClick={() => handleSelectedNote(button.alt)}
-                                isSelected={selectedNote === button.alt}
-                            />
-                        ))}
-                    </div>
-                    <img src={miniDivider} alt="Divider" className="toolbar__divider-icon" />
-                </div>
-            )}
-            {activeTab === 'Expression' && (
-                <div className="toolbar__expression-buttons">
-                    <div className="toolbar__group toolbar__group-expression">
-                        {expressionButtons.map((button, index) => (
-                            <ToolbarButton 
-                                key={index}
-                                icon={button.icon}
-                                alt={button.alt}
-                                onClick={() => handleSelectedNote(button.alt)}
-                                isSelected={selectedNote === button.alt}
-                            />
-                        ))}
-                    </div>
-                    <img src={miniDivider} alt="Divider" className="toolbar__divider-icon" />
-                    <div className="toolbar__group toolbar__group-piano">
-                        {pianoExpressionButtons.map((button, index) => (
-                            <ToolbarButton 
-                                key={`rest-${index}`}
-                                icon={button.icon}
-                                alt={button.alt}
-                                onClick={() => handleSelectedNote(button.alt)}
-                                isSelected={selectedNote === button.alt}
-                            />
-                        ))}
-                    </div>
-                    <img src={miniDivider} alt="Divider" className="toolbar__divider-icon" />
-                    <div className="toolbar__group toolbar__group-tempo-expression-buttons">
-                        {tempoExpressionButtons.map((button, index) => (
-                            <ToolbarButton 
-                                key={`rest-${index}`}
-                                icon={button.icon}
-                                alt={button.alt}
-                                onClick={() => handleSelectedNote(button.alt)}
-                                isSelected={selectedNote === button.alt}
-                            />
-                        ))}
-                    </div>
-                    <img src={miniDivider} alt="Divider" className="toolbar__divider-icon" />
-                    <div className="toolbar__group toolbar__group-octave-shift-buttons">
-                        {octaveShiftButtons.map((button, index) => (
-                            <ToolbarButton 
-                                key={`rest-${index}`}
-                                icon={button.icon}
-                                alt={button.alt}
-                                onClick={() => handleSelectedNote(button.alt)}
-                                isSelected={selectedNote === button.alt}
-                            />
-                        ))}
-                    </div>
-                    <img src={miniDivider} alt="Divider" className="toolbar__divider-icon" />
-                </div>
-            )} */}
-            
         </div>
     )
 }
