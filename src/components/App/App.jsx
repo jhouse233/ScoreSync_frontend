@@ -40,10 +40,6 @@ function App() {
           isKeyBoardVisible={isKeyBoardVisible}
           toggleKeyboard={toggleKeyboard}
         />
-        {/* <StaffCanvas 
-          isKeyBoardVisible={isKeyBoardVisible}
-          toggleKeyboard={toggleKeyboard}
-        /> */}
  
         {isKeyBoardVisible && (
           <div className="keyboard-overlay">

@@ -4,7 +4,7 @@ import { Renderer, Stave, StaveNote, Voice, Formatter } from 'vexflow';
 import EditorHeader from '../EditorHeader/EditorHeader';
 import Toolbar from '../Toolbar/Toolbar';
 
-export default function StaffCanvas({ isKeyBoardVisible, toggleKeyboard }) {
+export default function StaffCanvas() {
     const containerRef = useRef();
 
     useEffect(() => {
