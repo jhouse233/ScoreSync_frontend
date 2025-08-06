@@ -1,5 +1,5 @@
 import { useState } from 'react'
-
+import { ScoreProvider } from '../../contexts/ScoreContext.jsx';
 import './App.css'
 
 import Header from '../Header/Header.jsx';
@@ -41,13 +41,7 @@ function App() {
           toggleKeyboard={toggleKeyboard}
         />
  
-        {isKeyBoardVisible && (
-          <div className="keyboard-overlay">
-            <div className="keyboard-scroll">
-              <PianoInput onClose={toggleKeyboard} />
-            </div>
-          </div>
-        )}
+        
 
       </div>
     </div>

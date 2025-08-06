@@ -9,15 +9,18 @@ export function ScoreProvider({ children }) {
     const [selectedArticulation, setSelectedArticulation] = useState(null);
 
     const addNote = (pitch) => {
-        setNotes((prev) => [
-            ...prev,
-            {
+        if (!pitch || !selectedDuration) return;
+
+        const newNote = {
                 pitch,
                 duration: selectedDuration,
                 accidental: selectedAccidental,
                 articulation: selectedArticulation
-            },
-        ]);
+        };
+        
+        console.log('Adding new note', newNote);
+
+        setNotes((prev) => [...prev,newNote])
     };
 
     const clearNotes = () => setNotes([]);

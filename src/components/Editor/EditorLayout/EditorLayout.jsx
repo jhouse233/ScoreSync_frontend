@@ -16,6 +16,13 @@ export default function EditorLayout({ isKeyBoardVisible, toggleKeyboard }){
                     toggleKeyboard={toggleKeyboard}
                 />
                 <StaffCanvas />
+                {isKeyBoardVisible && (
+                    <div className="keyboard-overlay">
+                        <div className="keyboard-scroll">
+                            <PianoInput onClose={toggleKeyboard} />
+                        </div>
+                    </div>
+        )}
             </div>
         </ScoreProvider>
     )
