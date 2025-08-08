@@ -9,63 +9,55 @@ export default function StaffCanvas() {
     const containerRef = useRef();
     const { measures } = useScore();
 
-    const MEASURES_PER_ROW = 4;
-    const MEASURE_WIDTH = 420;
-    const FIRST_MEASURE_WIDTH = MEASURE_WIDTH + 60;
-    // const START_MEASURE_EXTRA_WIDTH = 50;
+    // Layout Constants
+    const MEASURES_PER_ROW = 3;
+    const MEASURE_WIDTH = 400;
+    const FIRST_MEASURE_WIDTH = MEASURE_WIDTH;
+    const START_X = 60;
     const STAVE_HEIGHT = 140;
     const STAVE_PADDING_TOP = 60;
 
     useEffect(() => {
-        console.log('Measures:', measures);
 
         const VF = { Renderer, Stave, StaveNote, Voice, Formatter };
         const div = containerRef.current;
         if (!div) return ;
-
         div.innerHTML = '';
 
         const rows = Math.ceil(measures.length / MEASURES_PER_ROW);
-        const totalWidth = MEASURES_PER_ROW * MEASURE_WIDTH + 20;
+        // const totalWidth = MEASURES_PER_ROW * MEASURE_WIDTH + 35;
+        const totalWidth = START_X + FIRST_MEASURE_WIDTH + (MEASURES_PER_ROW - 1) * MEASURE_WIDTH + START_X;
         const totalHeight = rows * STAVE_HEIGHT + STAVE_PADDING_TOP;
 
         const renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
         renderer.resize(totalWidth, totalHeight);
         const context = renderer.getContext();
 
-        // let y = 40;
-        function getStaveX(index, col) {
-            const row = Math.floor(index / MEASURES_PER_ROW);
-            const isFirstInRow = col === 0;
+        // Positioning Logic
+        function getStaveX(index) {
+            const col = index % MEASURES_PER_ROW;            
 
-            if (row === 0 && col === 0) return 50;
-            if (isFirstInRow) return 50;
+            if (col === 0) return START_X;
 
-            if (row === 0) {
-                return 50 + FIRST_MEASURE_WIDTH + (col - 1) * MEASURE_WIDTH;
-            }
-
-            const extraOffSet = 50 + FIRST_MEASURE_WIDTH;
-
-            const adjustedCol = (row === 0) ? col - 1 : col - 1;
-            return extraOffSet + adjustedCol * MEASURE_WIDTH;
+            return START_X + FIRST_MEASURE_WIDTH + (col - 1) * MEASURE_WIDTH;
         }
 
+        // Draw Measures
         measures.forEach((measure, index) => {
-            // console.log(`measure[${index}]`, measure)
-            // const stave = new VF.Stave(100, y, 400);
             const isFirstMeasure = index === 0;
             const isFirstInRow = index % MEASURES_PER_ROW === 0;
 
-            const row = Math.floor(index /MEASURES_PER_ROW);
+
+            const row = Math.floor(index / MEASURES_PER_ROW);
             const col = index % MEASURES_PER_ROW;
 
+
             const width = isFirstMeasure ? FIRST_MEASURE_WIDTH : MEASURE_WIDTH;
-            const x = getStaveX(index, col);
+            const x = getStaveX(index);
             const y = row * STAVE_HEIGHT + STAVE_PADDING_TOP;
 
 
-            const stave = new VF. Stave(x, y, width - 20);
+            const stave = new VF. Stave(x, y, width);
 
             if (isFirstMeasure && isFirstInRow) {
                 stave.addClef('treble').addTimeSignature('4/4');
