@@ -21,14 +21,18 @@ export function ScoreProvider({ children }) {
     const addNote = (pitch) => {
         if (!pitch || !selectedDuration) return;
 
+        const accidentalMatch = pitch.match(/^[a-g]([#b])\//i);
+        const inferredAccidental = accidentalMatch ? accidentalMatch[1] : null;
+
         const newNote = {
                 pitch,
                 duration: selectedDuration,
-                accidental: selectedAccidental,
+                accidental: inferredAccidental,
                 articulation: selectedArticulation
         };
         console.log('Adding note', newNote);
         // setNotes((prev) => [...prev,newNote])
+        console.log('[addNote] pitch:', pitch, 'accidental:', inferredAccidental, 'selected:', selectedAccidental)
         setMeasures((prevMeasures) => {
            
             const currentMeasure = [...prevMeasures[prevMeasures.length -1]];
