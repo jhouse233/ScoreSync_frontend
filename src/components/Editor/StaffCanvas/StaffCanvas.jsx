@@ -1,14 +1,10 @@
-import { useEffect, useRef } from 'react';
-import { Renderer, Stave, StaveNote, Voice, Formatter, Barline, Accidental, Articulation } from 'vexflow';
+import { useEffect, useRef, useState, useMemo } from 'react';
+import { Renderer, Stave } from 'vexflow';
 import { useScore } from '../../../contexts/ScoreContext';
 
-import EditorHeader from '../EditorHeader/EditorHeader';
-import Toolbar from '../Toolbar/Toolbar';
+import './StaffCanvas.css'
 
 export default function StaffCanvas() {
-    const containerRef = useRef();
-    const rendererRef = useRef(null);
-    const contextRef = useRef(null);
     const { measures } = useScore();
 
     // Layout Constants
@@ -16,8 +12,22 @@ export default function StaffCanvas() {
     const MEASURE_WIDTH = 400;
     const FIRST_MEASURE_WIDTH = MEASURE_WIDTH;
     const START_X = 60;
-    const STAVE_HEIGHT = 140;
     const STAVE_PADDING_TOP = 60;
+    const STAVE_PADDING_RIGHT = 60;
+    const STAVE_HEIGHT = 140;
+    const ROW_GAP = STAVE_PADDING_TOP;
+    const STAVE_Y_GAP = STAVE_HEIGHT + ROW_GAP;
+
+    const HIL_PAD_X = 1;
+    const HIL_PAD_Y = 40;
+    const HIL_RADIUS = 6;
+
+    // State
+    const [selectedMeasureId, setSelectedMeasureId] = useState(null);
+
+    const selectMeasure = (id) => setSelectedMeasureId(id);
+    const clearSelection = () => setSelectedMeasureId(null);
+    const isSelected = (id) => selectedMeasureId === id;
 
     function formatPitch(pitch){
         if (pitch.includes('/')) return pitch;
@@ -31,151 +41,125 @@ export default function StaffCanvas() {
         return accidental ? `${note}${accidental}/${octave}` : `${note}/${octave}`
     }
 
-    useEffect(() => {
-        if (!containerRef.current || rendererRef.current) return;
-        const renderer = new Renderer(containerRef.current, Renderer.Backends.SVG);
-        rendererRef.current = renderer;
-        contextRef.current = renderer.getContext();
-    }, []);
 
+    // Layout geometry for every measure
+    const layout = useMemo(() => {
+        return measures.map((m, i) => {
+            const row = Math.floor(i / MEASURES_PER_ROW);
+            const col = i % MEASURES_PER_ROW;
+            const x = START_X + col * MEASURE_WIDTH;
+            const y = STAVE_PADDING_TOP + row * STAVE_Y_GAP;
+            const width = col === 0 ? FIRST_MEASURE_WIDTH : MEASURE_WIDTH;
+            const height = STAVE_HEIGHT;
+            return { id: m.id ?? `m-${i}`, i, row, col, x, y, width, height};
+        });
+    }, [measures]);
+
+    // canvas size derived from layout
+    const totalRows = Math.max(1, Math.ceil(measures.length / MEASURES_PER_ROW));
+    const svgWidth = START_X + MEASURES_PER_ROW * MEASURE_WIDTH + STAVE_PADDING_RIGHT;
+    const svgHeight = STAVE_PADDING_TOP + totalRows * STAVE_Y_GAP;
+
+    // VexFlow renderer
+    const hostRef = useRef(null);
+    const rendererRef = useRef(null);
 
     useEffect(() => {
+        const host = hostRef.current;
+        if (!host) return;
+
+        if (!rendererRef.current) {
+            rendererRef.current = new Renderer(host, Renderer.Backends.SVG);
+        }
+
         const renderer = rendererRef.current;
-        const context = contextRef.current;
-        const div = containerRef.current;
-        if (!renderer || ! context || !div) return ;
+        renderer.resize(svgWidth, svgHeight);
+        const ctx = renderer.getContext();
 
-        const VF = { Renderer, Stave, StaveNote, Voice, Formatter, Barline, Accidental, Articulation };
-        // div.innerHTML = '';
-
-        const rows = Math.ceil(measures.length / MEASURES_PER_ROW);
-        const totalWidth = START_X + FIRST_MEASURE_WIDTH + (MEASURES_PER_ROW - 1) * MEASURE_WIDTH + START_X;
-        const totalHeight = rows * STAVE_HEIGHT + STAVE_PADDING_TOP;
-
-        renderer.resize(totalWidth, totalHeight);
-
-        const svgRoot = context.svg || div.querySelector('svg');
-        if (svgRoot) {
-            while (svgRoot.firstChild) svgRoot.removeChild(svgRoot.firstChild);
+        const svgEl = ctx?.svg ?? host.querySelector('svg');
+        if (svgEl?.replaceChildren) {
+            svgEl.replaceChildren();
+        } else {
+            host.replaceChildren()
         }
 
-        // const renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
-        // renderer.resize(totalWidth, totalHeight);
-        // const context = renderer.getContext();
-        // context.clear();
-        // context.setFont('Arial', 24)
-
-        // Positioning Logic
-        function getStaveX(index) {
-            const col = index % MEASURES_PER_ROW;            
-            if (col === 0) return START_X;
-            return START_X + FIRST_MEASURE_WIDTH + (col - 1) * MEASURE_WIDTH;
-        }
-
-        // Draw Measures
-
-        measures.forEach((measure, index) => {
-            const isFirstMeasure = index === 0;
-            const isFirstInRow = index % MEASURES_PER_ROW === 0;
-
-            const row = Math.floor(index / MEASURES_PER_ROW);
-            const col = index % MEASURES_PER_ROW;
-
-            const width = isFirstMeasure ? FIRST_MEASURE_WIDTH : MEASURE_WIDTH;
-            const x = getStaveX(index);
-            const y = row * STAVE_HEIGHT + STAVE_PADDING_TOP;
-            const stave = new VF. Stave(x, y, width);
-
-            if (index === measures.length - 1) {
-                stave.setEndBarType(VF.Barline.type.END)
-            } else {
-                stave.setEndBarType(VF.Barline.type.SINGLE);
-            }
-
-
-            if (isFirstMeasure && isFirstInRow) {
-                stave.addClef('treble').addTimeSignature('4/4');
-            } else if (isFirstInRow) {
-                stave.addClef('treble')
-            }
-
-            stave.setContext(context).draw();
-
-
-            const staveNotes = measure.map((note) => {
-                try {
-                    // Temporary code
-                    // console.log( 'Note', note.pitch, 'Accidental', note.accidental);
-
-                    // const [noteLetter, octave] = note.pitch.split(/(\d+)/);
-                    // const keyFormatted = noteLetter.toLowerCase().replace('#', '#/') + '/' + octave;
-
-                    // const staveNote = new VF.StaveNote({
-                    //     keys: [keyFormatted],
-                    //     duration: note.duration || 'q'
-                    // });
-
-                    // if (note.accidental) {
-                    //     staveNote.addModifier(0, new VF.Accidental(note.accidental))
-                    // }
-                    console.log('Rendering note', note.pitch, 'Accidental', note.accidental)
-
-                    // const formatPitch = (pitch) => {
-                    //     return pitch 
-                    //         .toLowerCase()
-                    //         .replace(/^([a-g])#(\d)$/, '$1#/$2')
-                    //         .replace(/^([a-g])b(\d)$/, '$1b/$2');
-                    // }
-
-
-
-
-
-                    const staveNote = new VF.StaveNote({
-                        // keys: [note.pitch],
-                        // keys: [note.pitch.toLowerCase().replace('#', '#/').replace('b', 'b/')],
-                        keys: [formatPitch(note.pitch)],
-                        duration: note.duration || 'q',
-                    });
-
-                    if (note.accidental) {
-                        // staveNote.addModifier(new VF.Accidental(note.accidental));
-                        staveNote.addModifier(new VF.Accidental(note.accidental),0);
-                    }
-
-                    if (note.articulation) {
-                        staveNote.addModifier( 
-                            new VF.Articulation(`a.${note.articulation}`).setPosition(
-                                VF.Modifier.Position.ABOVE
-                            ),
-                            0
-                        );
-                    }
-                    return staveNote;
-                } catch (err) {
-                    console.error('Error creating stave notes', err);
-                    return null;
-                }
-            }).filter(Boolean);
-
-            try {
-                const voice = new VF.Voice({ num_beats: 4, beat_value: 4}).setStrict(false);
-                if (staveNotes.length > 0) {
-                    voice.addTickables(staveNotes);
-                    new Formatter().joinVoices([voice]).format([voice], width - 60);
-                    voice.draw(context, stave);
-                }
-            } catch (err) {
-                console.error('Error formatting or drawing voice', err);
-            }
+        layout.forEach(({ x, y, width }) => {
+            new Stave(x, y, width).setContext(ctx).draw();
         });
 
-    }, [measures]);
+        return () => {
+            const svg = ctx?.svg ?? host.querySelector('svg');
+            svg?.replaceChildren?.();
+        }
+    }, [layout, svgWidth, svgHeight]);
+
+
+
+
+
+    useEffect(() => {
+        if (selectedMeasureId && !layout.some(l => l.id === selectedMeasureId)) {
+            setSelectedMeasureId(null);
+        }
+    }, [layout, selectedMeasureId])
+
+
+    const handleBgClick = (e) => {e.preventDefault(); clearSelection();}
+    const handleDbClick = (id) => {
+        console.log('Doubleclick measure', id);
+        selectMeasure(id);
+    }
+
 
     return (
         <div className="staff__canvas">
             <div className="staffcanvas__composition-content">
-                <div ref={containerRef}></div>
+                <div className="staffcanvas__stage">
+                    <div ref={hostRef} className='staffcanvas__vf'/>
+                    <svg 
+                        className="staffcanvas__overlay"
+                        width={svgWidth}
+                        height={svgHeight}
+                        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+                    
+                    >
+                        <rect 
+                            x='0' y='0' width={svgWidth} 
+                            height={svgHeight} 
+                            fill='transparent' 
+                            onMouseDown={handleBgClick}
+                        />
+
+                        {layout.map(({ id, x, y, width, height }) => {
+                            const selected = isSelected(id);
+                            return (
+                                <g key={id}>
+                                    {selected && (
+                                        <rect 
+                                            x={x + HIL_PAD_X}
+                                            y={y + HIL_PAD_Y}
+                                            width={width - 2 * HIL_PAD_X}
+                                            height={height - 2.5 * HIL_PAD_Y}
+                                            rx={HIL_RADIUS}
+                                            ry={HIL_RADIUS}
+                                            className='staffcanvas__highlight'
+                                            strokeWidth='3'
+                                            pointerEvents='none'
+                                        />
+                                    )}
+                                    <rect
+                                        x={x}
+                                        y={y}
+                                        width={width}
+                                        height={height}
+                                        fill='transparent'
+                                        onDoubleClick={(e) =>  {e.preventDefault(); handleDbClick(id)}}
+                                    />
+                                </g>
+                            );
+                        })}        
+                    </svg>
+                </div>
             </div>
         </div>
     )

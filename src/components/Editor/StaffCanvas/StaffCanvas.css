@@ -9,12 +9,39 @@
 
 }
 
-staff__canvas-placeholder {
-    color: #999;
-    text-align: center;
-    padding-top: 200px;
-    font-style: italic;
-    display: flex;
-    align-items: center;
-    margin: auto;
+.staffcanvas__stage {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+}
+
+.staffcanvas__stage,
+.staffcanvas__stage * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.staffcanvas__vf {
+
+}
+
+.staffcanvas__vf svg {
+    display: block;
+    width: auto;
+    height: auto;
+    pointer-events: none;
+}
+
+.staffcanvas__overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.staffcanvas__highlight {
+    stroke: #EDCD97;
+    fill: #EDCD97;
+    opacity: 0.3;
 }

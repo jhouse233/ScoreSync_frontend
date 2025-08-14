@@ -1,89 +1,97 @@
-import React, { createContext, useContext, useState} from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useReducer } from 'react';
+import { nanoid } from 'nanoid';
 
 const ScoreContext = createContext();
 
-const TICKS_PER_MEASURE = 1024;
-const DURATION_TO_TICKS = {
-    'w': 1024,
-    'h': 512,
-    'q': 256,
-    '8': 128,
-    '16': 64
-};
 
-export function ScoreProvider({ children }) {
-    // const [notes, setNotes] = useState([]);
-    const [measures, setMeasures] = useState([[]])
-    const [selectedDuration, setSelectedDuration] = useState('q');
-    const [selectedAccidental, setSelectedAccidental] = useState(null);
-    const [selectedArticulation, setSelectedArticulation] = useState(null);
+// --- ID
+const createId = () => nanoid();
+const createBlankMeasure = () => ({ id: createId(), notes: [] });
 
-    const addNote = (pitch) => {
-        if (!pitch || !selectedDuration) return;
+const normalizeMeasures = (input = []) =>
+    input.map(
+        m => Array.isArray(m)
+        ? { id: createId(), notes: m }
+        : (m.id ? m : { ...m, id: createId() })
+    );
+// --- State
+const initialState = { measures: [], selectedMeasureId: null };
 
-        const accidentalMatch = pitch.match(/^[a-g]([#b])\//i);
-        const inferredAccidental = accidentalMatch ? accidentalMatch[1] : null;
+function reducer(state, action) {
+    switch (action.type) {
+        case 'INIT': {
+            return { measures: normalizeMeasures(action.payload), selectedMeasureId: null};
+        }
+        case 'SELECT': {
+            const id = action.payload;
+            return state.measures.some(m => m.id === id)
+            ? { ...state, selectedMeasureId: id }
+            : { ...state, selectedMeasureId: null };
+        }
+        case 'CLEAR':
+            return { ...state, selectedMeasureId: null };
 
-        const newNote = {
-                pitch,
-                duration: selectedDuration,
-                accidental: inferredAccidental,
-                articulation: selectedArticulation
+        case 'ADD': {
+            const m = createBlankMeasure();
+            return { measures: [...state.measures, m], selectedMeasureId: m.id };
+        }
+
+        case 'INSERT_BEFORE': {
+            const targetId = action.payload;
+            const idx = state.measures.findIndex(m => m.id === targetId);
+            if (idx < 0) return state;
+            const m = createBlankMeasure();
+            const next = state.measures.slice();
+            next.splice(idx, 0, m);
+            return { measures: next, selectedMeasureId: m.id };
+        }
+
+        case 'REMOVE': {
+            const targetId = action.payload;
+            const idx = state.measures.findIndex(m => m.id === targetId);
+            if (idx < 0) return state;
+            const next = state.measures.filter(m => m.id !== targetId);
+
+            const fallback = next[idx - 1]?.id ?? next[idx]?.id ?? null;
+            const nextSel = state.selectedMeasureId === targetId ? fallback : state.selectedMeasureId;
+            return { measures: next, selectedMeasureId: nextSel}
+        }
+
+        default:
+            return state;
+    }
+}
+
+export default function ScoreProvider({ initialMeasures = [], children }) {
+    const [state, dispatch] = useReducer(reducer, initialState);
+
+    useEffect(() => {
+        if (state.measures.length === 0 && initialMeasures.length > 0) {
+            void dispatch({ type: 'INIT', payload: initialMeasures });
+        }
+    }, [initialMeasures, state.measures.length]);
+
+    const value = useMemo(() => {
+        const selectMeasure = (id) => dispatch({ type: 'SELECT', payload: id });
+        const clearSelection = () => dispatch({ type: 'CLEAR' });
+        const addMeasure = () => dispatch({ type: 'ADD' });
+        const insertBefore = (targetId) => dispatch({ type: 'INSERT_BEFORE', payload: targetId });
+        const removeMeasure = (id) => dispatch({ type: 'REMOVE', payload: id });
+
+        return {
+            measures: state.measures,
+            selectedMeasureId: state.selectedMeasureId,
+            selectMeasure,
+            clearSelection,
+            addMeasure,
+            insertBefore,
+            removeMeasure,
+            idToIndex: new Map(state.measures.map((m, i) => [m.id, i])),
         };
-        console.log('Adding note', newNote);
-        // setNotes((prev) => [...prev,newNote])
-        console.log('[addNote] pitch:', pitch, 'accidental:', inferredAccidental, 'selected:', selectedAccidental)
-        setMeasures((prevMeasures) => {
-           
-            const currentMeasure = [...prevMeasures[prevMeasures.length -1]];
-
-            const currentTicks = currentMeasure.reduce((sum, note) => {
-                return sum + (DURATION_TO_TICKS[note.duration] || 0);
-            }, 0)
-
-            const noteTicks = DURATION_TO_TICKS[newNote.duration] || 0;
-            const newMeasure = [...currentMeasure, newNote]
-
-            // console.log('--- DEBUG ---');
-            // console.log('Previous measures:', prevMeasures);
-            // console.log('Current measure before add:', currentMeasure);
-            // console.log('Current total ticks:', currentTicks);
-            // console.log('New note ticks:', noteTicks);
-            // console.log('New measure content:', newMeasure);
-
-
-            if (currentTicks + noteTicks <= TICKS_PER_MEASURE) {
-                const updated = [...prevMeasures];
-                updated[updated.length - 1] = newMeasure;
-                return updated;
-            } else {
-                return [...prevMeasures, [newNote]];
-            }
-            
-        });
-    };
-
-    const clearNotes = () => setMeasures([[]]);
-
-    // const clearNotes = () => setNotes([]);
-
-    return (
-        <ScoreContext.Provider
-            value={{
-                measures,
-                addNote,
-                clearNotes,
-                selectedDuration,
-                setSelectedDuration,
-                selectedAccidental,
-                setSelectedAccidental,
-                selectedArticulation,
-                setSelectedArticulation
-            }}
-        >
-            {children}
-        </ScoreContext.Provider>
-    )
+    }, [state])
+    
+    
+    return <ScoreContext.Provider value={value}>{children}</ScoreContext.Provider>
 }
 
 export function useScore() {
