@@ -5,10 +5,12 @@ import Toolbar from '../Toolbar/Toolbar';
 import StaffCanvas from '../StaffCanvas/StaffCanvas';
 import PianoInput from '../PianoInput/PianoInput';
 import EditorHeader from '../EditorHeader/EditorHeader';
+import EditorHotkeys from './EditorHotkeys';
 
 export default function EditorLayout({ isKeyBoardVisible, toggleKeyboard }){
     return(
         <ScoreProvider>
+            <EditorHotkeys />
             <div className="editor">
                 <EditorHeader />
                 <Toolbar 
