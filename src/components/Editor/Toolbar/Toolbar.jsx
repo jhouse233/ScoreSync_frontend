@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useScore } from '../../../contexts/ScoreContext';
 
 import './Toolbar.css';
-import ToolbarButton from './ToolBarButton';
+import ToolbarButton from './ToolbarButton';
 import PianoToggleButton from './ToolbarActionButtons/PianoToggleButton';
 
 // Note images
@@ -15,7 +15,7 @@ import halfNote from '../../../assets/half-note.svg';
 import wholeNote from '../../../assets/whole-note.svg';
 
 import sixtyFourthRest from '../../../assets/sixty-fourth-rest.svg';
-import thirtySecondRest from '../../../assets/sixty-fourth-rest.svg';
+import thirtySecondRest from '../../../assets/thirty-second-rest.svg';
 import sixteenthRest from '../../../assets/sixteenth-rest.svg';
 import eighthRest from '../../../assets/eighth-rest.svg';
 import quarterRest from '../../../assets/quarter-rest.svg';
@@ -72,7 +72,7 @@ import removeMeasure from '../../../assets/removemeasure.svg';
 import addMeasure from '../../../assets/addmeasure.svg';
 import insertMeasure from '../../../assets/insertmeasure.svg';
 import trebleClef from '../../../assets/trebleclef.svg';
-import bassClef from '../../../assets/basscleff.svg';
+import bassClef from '../../../assets/bassclef.svg';
 import metronome from '../../../assets/metronome.svg';
 import barline from '../../../assets/barline.svg';
 import doubleBarline from '../../../assets/doublebarline.svg';
@@ -208,19 +208,13 @@ const toolbarConfig = {
 
 
 export default function Toolbar({ isKeyBoardVisible, toggleKeyboard }){
-    const [selectedNote, setSelectedNote] = useState(null);
     const [activeTab, setActiveTab] = useState('Note')
 
+    const [selectedDuration, setSelectedDuration] = useState(null);
+    const [selectedAccidental, setSelectedAccidental] = useState(null);
+    const [selectedArticulation, setSelectedArticulation] = useState(null);
 
-    const {
-        selectedDuration,
-        setSelectedDuration,
-        selectedAccidental,
-        setSelectedAccidental,
-        selectedArticulation,
-        setSelectedArticulation
-    } = useScore();
-
+    const { selectedMeasureId, addMeasure, insertBefore, removeMeasure } = useScore();
     const handleSelectedNote = (alt, groupKey) => {
         switch (groupKey) {
             case 'notes':
@@ -264,16 +258,30 @@ export default function Toolbar({ isKeyBoardVisible, toggleKeyboard }){
                 );
                 break;
 
+            case 'measure': {
+                if (alt === 'add measure') {
+                    addMeasure();
+                    break;
+                }
+                if (alt === 'insert measure') {
+                    if (!selectedMeasureId) return;
+                    insertBefore(selectedMeasureId);
+                    break;
+                }
+                if (alt === 'remove measure') {
+                    if (!selectedMeasureId) return;
+                    removeMeasure(selectedMeasureId);
+                    break;
+                }
+                break;
+            }
+
             default:
                 console.log(`Unhandled group key: ${groupKey}`)
                 break;
             
         }
     }
-
-
-
-
 
     return (
         <div className="toolbar">
@@ -284,6 +292,7 @@ export default function Toolbar({ isKeyBoardVisible, toggleKeyboard }){
                             key={tab}
                             onClick={() => setActiveTab(tab)}
                             className={`toolbar__tab ${activeTab === tab ? 'toolbar__tab--active' : ''}`}
+                            type='button'
                             >
                                 {tab}
                         </button>
@@ -301,14 +310,22 @@ export default function Toolbar({ isKeyBoardVisible, toggleKeyboard }){
                     {toolbarConfig[activeTab].map((group, index) => (
                         <React.Fragment key={group.key}>
                             <div className={`toolbar__group ${group.className}`}>
-                                {group.buttons.map((button, idx) => (
-                                    <ToolbarButton 
-                                        key={`${group.key}-${idx}`}
-                                        icon={button.icon}
-                                        alt={button.alt}
-                                        onClick={() => handleSelectedNote(button.alt, group.key)}
-                                    />
-                                ))}
+                                {group.buttons.map((button, idx) => {
+                                    const isMeasureGroup = group.key === 'measure';
+                                    const requireSelection = isMeasureGroup && button.alt !== 'add measure';
+                                    const disabled = requireSelection && !selectedMeasureId;
+                                    
+                                    return (
+                                        <ToolbarButton 
+                                            key={`${group.key}-${idx}`}
+                                            icon={button.icon}
+                                            alt={button.alt}
+                                            onClick={() => !disabled && handleSelectedNote(button.alt, group.key)}
+                                            disabled={disabled}
+                                            title={disabled ? 'Select a measure first' : button.alt}
+                                        />
+                                    );
+                                })}
                             </div>
                             {index < toolbarConfig[activeTab].length - 1 && (
                                 <img src={miniDivider} alt="Divider" className="toolbar__divider-icon" />

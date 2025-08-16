@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScoreProvider } from '../../../contexts/ScoreContext';
+import ScoreProvider from '../../../contexts/ScoreContext';
 
 import Toolbar from '../Toolbar/Toolbar';
 import StaffCanvas from '../StaffCanvas/StaffCanvas';

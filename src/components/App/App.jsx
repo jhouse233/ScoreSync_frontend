@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ScoreProvider } from '../../contexts/ScoreContext.jsx';
+import ScoreProvider  from '../../contexts/ScoreContext.jsx';
 import './App.css'
 
 import Header from '../Header/Header.jsx';
@@ -36,13 +36,12 @@ function App() {
         <LoginPage />
         <RegisterPage />
         <DashboardPage />
-        <EditorLayout 
-          isKeyBoardVisible={isKeyBoardVisible}
-          toggleKeyboard={toggleKeyboard}
-        />
- 
-        
-
+        <ScoreProvider>
+          <EditorLayout 
+            isKeyBoardVisible={isKeyBoardVisible}
+            toggleKeyboard={toggleKeyboard}
+          />
+        </ScoreProvider>
       </div>
     </div>
   )

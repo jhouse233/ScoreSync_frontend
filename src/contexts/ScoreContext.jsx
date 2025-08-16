@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid';
 const ScoreContext = createContext();
 
 
-// --- ID
+// --- ID and Normalizer
 const createId = () => nanoid();
 const createBlankMeasure = () => ({ id: createId(), notes: [] });
 
@@ -14,7 +14,8 @@ const normalizeMeasures = (input = []) =>
         ? { id: createId(), notes: m }
         : (m.id ? m : { ...m, id: createId() })
     );
-// --- State
+
+// --- State and Reducer
 const initialState = { measures: [], selectedMeasureId: null };
 
 function reducer(state, action) {
@@ -57,17 +58,24 @@ function reducer(state, action) {
             return { measures: next, selectedMeasureId: nextSel}
         }
 
-        default:
+        default: {
+            if (process.env.NODE_ENV !== 'production') {
+                throw new Error(`Unknown action: ${action.type}`);
+            }
+
             return state;
+        }
+            
     }
 }
 
+// -- Provider
 export default function ScoreProvider({ initialMeasures = [], children }) {
     const [state, dispatch] = useReducer(reducer, initialState);
 
     useEffect(() => {
         if (state.measures.length === 0 && initialMeasures.length > 0) {
-            void dispatch({ type: 'INIT', payload: initialMeasures });
+            dispatch({ type: 'INIT', payload: initialMeasures });
         }
     }, [initialMeasures, state.measures.length]);
 
@@ -93,7 +101,7 @@ export default function ScoreProvider({ initialMeasures = [], children }) {
     
     return <ScoreContext.Provider value={value}>{children}</ScoreContext.Provider>
 }
-
+// -- Hook
 export function useScore() {
     const context = useContext(ScoreContext);
     if (!context) {

@@ -1,18 +1,28 @@
-import { useState } from 'react';
 
 import './ToolbarButton.css';
 
-export default function ToolbarButton({ icon, alt, onClick, isSelected }){
-    const [activeButton, setActiveButton] = useState(false);
-
+export default function ToolbarButton({ 
+    icon, 
+    alt, 
+    onClick, 
+    disabled = false, 
+    title, 
+    isSelected = false, 
+    isToggle = false 
+}){
+    const label = title || alt;
 
     return (
         <button 
-            onClick={onClick}
-            className={`toolbar__button ${isSelected ? 'toolbar__button--active' : ''}`}
-            title={alt}
+            onClick={disabled ? undefined : onClick}
+            className={`toolbar__button ${isSelected ? 'toolbar__button--active' : ''} ${disabled ? 'is-disabled' : ''}`}
+            title={label}
+            type='button'
+            disabled={disabled}
+            aria-pressed={isToggle ? isSelected : undefined}
+            aria-label={label}
             >
-                <img src={icon} alt={alt} className="toolbar__image" />
+                <img src={icon} alt='' className="toolbar__image" />
         </button>
     )
 }
