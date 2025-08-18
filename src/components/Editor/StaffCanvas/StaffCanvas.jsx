@@ -94,9 +94,6 @@ export default function StaffCanvas() {
     }, [layout, svgWidth, svgHeight]);
 
 
-
-
-
     useEffect(() => {
         if (selectedMeasureId && !layout.some(l => l.id === selectedMeasureId)) {
             setSelectedMeasureId(null);

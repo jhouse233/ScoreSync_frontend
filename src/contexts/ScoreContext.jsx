@@ -3,25 +3,100 @@ import { nanoid } from 'nanoid';
 
 const ScoreContext = createContext();
 
+// --- State and Actions
+const initialState = { 
+    measures: [], 
+    selectedMeasureId: null,
+    measuresPerRow: 3,
+    defaultClef: 'treble',
+    clefEvents: [] 
+};
+
+export const actions = {
+    SET_CLEF_AT_MEASURE: 'SET_CLEF_AT_MEASURE',
+    REMOVE_CLEF_AT_MEASURE: 'REMOVE_CLEF_AT_MEASURE',
+    SET_MEASURES_PER_ROW: 'SET_MEASURES_PER_ROW',
+}
 
 // --- ID and Normalizer
 const createId = () => nanoid();
 const createBlankMeasure = () => ({ id: createId(), notes: [] });
 
 const normalizeMeasures = (input = []) =>
-    input.map(
-        m => Array.isArray(m)
-        ? { id: createId(), notes: m }
-        : (m.id ? m : { ...m, id: createId() })
+    input.map((m) => {
+        if (Array.isArray(m)) return { id: createId(), notes: m };
+        const id = m?.id ?? createId();
+        const notes = Array.isArray(m?.notes) ? m.notes : [];
+        return { ...m, id, notes };
+    });
+
+// Lookups
+const getMeasureIndexById = (state, id) =>
+    id ? state.measures.findIndex((m) => m.id === id) : -1;
+
+const isSystemStart = (measureIndex, measuresPerRow) => {
+    const perRow = Math.max(1, Number(measuresPerRow) || 1);
+    return measureIndex % perRow === 0;
+}
+
+
+// Clef Events
+export function insertClefEvent(events, atMeasureIndex, clef, size) {
+    const safe = Array.isArray(events) ? events: [];
+    const existing = safe.find(e => e.atMeasureIndex === atMeasureIndex);
+    if (existing && existing.clef === clef && existing.size === size) return safe;
+    const without = safe.filter(e => e.atMeasureIndex !== atMeasureIndex);
+    const next = [...without, {atMeasureIndex, clef, size }];
+    next.sort((a, b) => a.atMeasureIndex - b.atMeasureIndex);
+    return next;
+}
+
+export function removeClefEvent(events, atMeasureIndex) {
+    const safe = Array.isArray(events) ? events : [];
+    return safe.filter(e => e.atMeasureIndex !== atMeasureIndex)
+}
+
+// Clef Event Shifting
+const shiftClefEventsForInsert = (events, insertedAt) =>
+    (Array.isArray(events) ? events: []).map((e) =>
+        e.atMeasureIndex >= insertedAt 
+        ? { ...e, atMeasureIndex: e.atMeasureIndex + 1} 
+        : e
     );
 
-// --- State and Reducer
-const initialState = { measures: [], selectedMeasureId: null };
+const shiftClefEventsForDelete = (events, deletedAt) =>
+    (Array.isArray(events) ? events : [])
+        .filter((e) => e.atMeasureIndex !== deletedAt)
+        .map((e) => 
+            e.atMeasureIndex > deletedAt 
+            ? { ...e, atMeasureIndex: e.atMeasureIndex - 1 } 
+            : e
+        );
 
+const getLastClefEventAtOrBefore = (state, measureIndex) => {
+    const events = Array.isArray(state.clefEvents) ? state.clefEvents : [];
+    let last = null;
+    for (let i = 0; i <events.length; i++) {
+        const e = events[i];
+        if (e.atMeasureIndex <= measureIndex) last = e;
+        else break;
+    }
+    return last;
+}
+
+export const getEffectiveClefAtMeasure = (state, measureIndex) =>
+    getLastClefEventAtOrBefore(state, measureIndex)?.clef || state.defaultClef || 'treble';
+
+
+// Reducer
 function reducer(state, action) {
     switch (action.type) {
         case 'INIT': {
-            return { measures: normalizeMeasures(action.payload), selectedMeasureId: null};
+            return {
+                ...state, 
+                measures: normalizeMeasures(action.payload), 
+                selectedMeasureId: null
+            };
         }
         case 'SELECT': {
             const id = action.payload;
@@ -34,7 +109,13 @@ function reducer(state, action) {
 
         case 'ADD': {
             const m = createBlankMeasure();
-            return { measures: [...state.measures, m], selectedMeasureId: m.id };
+            const insertedAt = state.measures.length;
+            return { 
+                ...state,
+                measures: [...state.measures, m], 
+                selectedMeasureId: m.id,
+                clefEvents: shiftClefEventsForInsert(state.clefEvents, insertedAt),
+            };
         }
 
         case 'INSERT_BEFORE': {

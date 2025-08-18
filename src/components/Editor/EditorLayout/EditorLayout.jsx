@@ -9,23 +9,21 @@ import EditorHotkeys from './EditorHotkeys';
 
 export default function EditorLayout({ isKeyBoardVisible, toggleKeyboard }){
     return(
-        <ScoreProvider>
+        <div className="editor">
             <EditorHotkeys />
-            <div className="editor">
-                <EditorHeader />
-                <Toolbar 
-                    isKeyBoardVisible={isKeyBoardVisible}
-                    toggleKeyboard={toggleKeyboard}
-                />
-                <StaffCanvas />
-                {isKeyBoardVisible && (
-                    <div className="keyboard-overlay">
-                        <div className="keyboard-scroll">
-                            <PianoInput onClose={toggleKeyboard} />
-                        </div>
+            <EditorHeader />
+            <Toolbar 
+                isKeyBoardVisible={isKeyBoardVisible}
+                toggleKeyboard={toggleKeyboard}
+            />
+            <StaffCanvas />
+            {isKeyBoardVisible && (
+                <div className="keyboard-overlay">
+                    <div className="keyboard-scroll">
+                        <PianoInput onClose={toggleKeyboard} />
                     </div>
-        )}
-            </div>
-        </ScoreProvider>
+                </div>
+            )}
+        </div> 
     )
 }
