@@ -284,10 +284,3 @@ export default function ScoreProvider({ initialMeasures = [], children }) {
     return <ScoreContext.Provider value={value}>{children}</ScoreContext.Provider>
 }
 // -- Hook
-export function useScore() {
-    const context = useContext(ScoreContext);
-    if (!context) {
-        throw new Error('useScore must be used within a ScoreProvider')
-    }
-    return context;
-}
