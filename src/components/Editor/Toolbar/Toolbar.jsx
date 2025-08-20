@@ -214,7 +214,13 @@ export default function Toolbar({ isKeyBoardVisible, toggleKeyboard }){
     const [selectedAccidental, setSelectedAccidental] = useState(null);
     const [selectedArticulation, setSelectedArticulation] = useState(null);
 
-    const { selectedMeasureId, addMeasure, insertBefore, removeMeasure } = useScore();
+    const { 
+        selectedMeasureId, 
+        addMeasure, 
+        insertBefore, 
+        removeMeasure,
+        setClefAtSelectedMeasure,
+    } = useScore();
     const handleSelectedNote = (alt, groupKey) => {
         switch (groupKey) {
             case 'notes':
@@ -273,6 +279,13 @@ export default function Toolbar({ isKeyBoardVisible, toggleKeyboard }){
                     removeMeasure(selectedMeasureId);
                     break;
                 }
+                break;
+            }
+
+            case 'clef': {
+                if (!selectedMeasureId) return;
+                if (alt === 'treble clef') setClefAtSelectedMeasure('treble');
+                if (alt === 'bass clef') setClefAtSelectedMeasure('bass');
                 break;
             }
 

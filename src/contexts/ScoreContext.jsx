@@ -122,22 +122,55 @@ function reducer(state, action) {
             const targetId = action.payload;
             const idx = state.measures.findIndex(m => m.id === targetId);
             if (idx < 0) return state;
+
             const m = createBlankMeasure();
-            const next = state.measures.slice();
-            next.splice(idx, 0, m);
-            return { measures: next, selectedMeasureId: m.id };
+            const nextMeasures = state.measures.slice();
+            nextMeasures.splice(idx, 0, m);
+            return { 
+                ...state,
+                measures: nextMeasures, 
+                selectedMeasureId: m.id,
+                clefEvents: shiftClefEventsForInsert(state.clefEvents, idx),
+            };
         }
 
         case 'REMOVE': {
             const targetId = action.payload;
             const idx = state.measures.findIndex(m => m.id === targetId);
             if (idx < 0) return state;
-            const next = state.measures.filter(m => m.id !== targetId);
 
-            const fallback = next[idx - 1]?.id ?? next[idx]?.id ?? null;
+            const nextMeasures = state.measures.filter(m => m.id !== targetId);
+            const fallback = nextMeasures[idx - 1]?.id ?? nextMeasures[idx]?.id ?? null;
             const nextSel = state.selectedMeasureId === targetId ? fallback : state.selectedMeasureId;
-            return { measures: next, selectedMeasureId: nextSel}
+            return { 
+                ...state,
+                measures: nextMeasures, 
+                selectedMeasureId: nextSel,
+                clefEvents: shiftClefEventsForDelete(state.clefEvents, idx),
+            };
         }
+
+        case actions.SET_MEASURES_PER_ROW: {
+            return { ...state, measuresPerRow: action.payload };
+        }
+
+        case actions.SET_CLEF_AT_MEASURE: {
+            const { atMeasureIndex, clef } = action.payload;
+            const size = isSystemStart(atMeasureIndex, state.measuresPerRow) ? 'default' : 'small';
+            return {
+                ...state,
+                clefEvents: insertClefEvent(state.clefEvents, atMeasureIndex, clef, size),
+            };
+        }
+
+        case actions.REMOVE_CLEF_AT_MEASURE: {
+            const { atMeasureIndex } = action.payload;
+            return {
+                ...state,
+                clefEvents: removeClefEvent(state.clefEvents, atMeasureIndex),
+            };
+        }
+
 
         default: {
             if (process.env.NODE_ENV !== 'production') {
@@ -167,15 +200,83 @@ export default function ScoreProvider({ initialMeasures = [], children }) {
         const insertBefore = (targetId) => dispatch({ type: 'INSERT_BEFORE', payload: targetId });
         const removeMeasure = (id) => dispatch({ type: 'REMOVE', payload: id });
 
+        const idToIndex = new Map(state.measures.map((m, i) => [m.id, i]));
+
+        const setMeasuresPerRow = (n) =>
+            dispatch({ type: actions.SET_MEASURES_PER_ROW, payload: n });
+
+        const setClefAtMeasureIndex = (atMeasureIndex, clef) =>
+            dispatch({ type: actions.SET_CLEF_AT_MEASURE, payload: { atMeasureIndex, clef } });
+
+        const removeClefAtMeasureIndex = (atMeasureIndex) =>
+            dispatch({ type: actions.REMOVE_CLEF_AT_MEASURE, payload: { atMeasureIndex } });
+
+        const setClefAtSelectedMeasure = (clef) => {
+            const selId = state.selectedMeasureId;
+            if (!selId) return;
+            const i = idToIndex.get(selId);
+            if (typeof i === 'number' && i >= 0) {
+                dispatch({ type: actions.SET_CLEF_AT_MEASURE, payload: { atMeasureIndex: i, clef } });
+            }
+        };
+
+        const removeClefAtSelectedMeasure = () => {
+            const selId = state.selectedMeasureId;
+            if (!selId) return;
+            const i = idToIndex.get(selId);
+            if (typeof i === 'number' && i >= 0) {
+                dispatch({ type: actions.REMOVE_CLEF_AT_MEASURE, payload: {atMeasureIndex: i } });
+            }
+        };
+
+        const getSystemStartClef = (systemIndex) => {
+            const perRow = Math.max(1, Number(state.measuresPerRow) || 1);
+            const startIdx = systemIndex * perRow;
+            const events = state.clefEvents;
+
+            let last = null;
+            for (let k = 0; k < events.length; k++) {
+                const e = events[k];
+                if (e.atMeasureIndex <= startIdx) last = e;
+                else break;
+            }
+            return last?.clef || state.defaultClef || 'treble';
+        };
+
+        const getEffectiveClefAtMeasure = (measureIndex) => {
+            const events = state.clefEvents;
+            let last = null;
+            for (let k = 0; k < events.length; k++) {
+                const e = events[k];
+                if (e.atMeasureIndex <= measureIndex) last = e;
+                else break;
+            }
+            return last?.clef || state.defaultClef || 'treble';
+        };
+
         return {
             measures: state.measures,
             selectedMeasureId: state.selectedMeasureId,
+            measuresPerRow: state.measuresPerRow,
+            defaultClef: state.defaultClef,
+            clefEvents: state.clefEvents,
+
             selectMeasure,
             clearSelection,
             addMeasure,
             insertBefore,
             removeMeasure,
-            idToIndex: new Map(state.measures.map((m, i) => [m.id, i])),
+
+            setMeasuresPerRow,
+            setClefAtMeasureIndex,
+            removeClefAtMeasureIndex,
+            setClefAtSelectedMeasure,
+            removeClefAtSelectedMeasure,
+
+            idToIndex,
+
+            getSystemStartClef,
+            getEffectiveClefAtMeasure,
         };
     }, [state])
     

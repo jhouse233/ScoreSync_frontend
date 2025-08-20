@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { Renderer, Stave } from 'vexflow';
+import { Renderer, Stave, StaveNote, Voice, Formatter, ClefNote } from 'vexflow';
 import { useScore } from '../../../contexts/ScoreContext';
+
 
 import './StaffCanvas.css'
 
 export default function StaffCanvas() {
     const { measures } = useScore();
+    // const { measuresPerRow } = useScore();
 
     // Layout Constants
-    const MEASURES_PER_ROW = 3;
+    // const MEASURES_PER_ROW = 3;
     const MEASURE_WIDTH = 400;
     const FIRST_MEASURE_WIDTH = MEASURE_WIDTH;
     const START_X = 60;
@@ -23,10 +25,22 @@ export default function StaffCanvas() {
     const HIL_RADIUS = 6;
 
     // State
-    const [selectedMeasureId, setSelectedMeasureId] = useState(null);
+    // const [selectedMeasureId, setSelectedMeasureId] = useState(null);
 
-    const selectMeasure = (id) => setSelectedMeasureId(id);
-    const clearSelection = () => setSelectedMeasureId(null);
+    // const selectMeasure = (id) => setSelectedMeasureId(id);
+    // const clearSelection = () => setSelectedMeasureId(null);
+   
+
+    const {
+        selectedMeasureId,
+        selectMeasure,
+        clearSelection,
+        measuresPerRow,
+        clefEvents,
+        getSystemStartClef,
+        getEffectiveClefAtMeasure,
+    } = useScore();
+
     const isSelected = (id) => selectedMeasureId === id;
 
     function formatPitch(pitch){
@@ -45,19 +59,19 @@ export default function StaffCanvas() {
     // Layout geometry for every measure
     const layout = useMemo(() => {
         return measures.map((m, i) => {
-            const row = Math.floor(i / MEASURES_PER_ROW);
-            const col = i % MEASURES_PER_ROW;
+            const row = Math.floor(i / measuresPerRow);
+            const col = i % measuresPerRow;
             const x = START_X + col * MEASURE_WIDTH;
             const y = STAVE_PADDING_TOP + row * STAVE_Y_GAP;
             const width = col === 0 ? FIRST_MEASURE_WIDTH : MEASURE_WIDTH;
             const height = STAVE_HEIGHT;
             return { id: m.id ?? `m-${i}`, i, row, col, x, y, width, height};
         });
-    }, [measures]);
+    }, [measures, measuresPerRow]);
 
     // canvas size derived from layout
-    const totalRows = Math.max(1, Math.ceil(measures.length / MEASURES_PER_ROW));
-    const svgWidth = START_X + MEASURES_PER_ROW * MEASURE_WIDTH + STAVE_PADDING_RIGHT;
+    const totalRows = Math.max(1, Math.ceil(measures.length / measuresPerRow));
+    const svgWidth = START_X + measuresPerRow * MEASURE_WIDTH + STAVE_PADDING_RIGHT;
     const svgHeight = STAVE_PADDING_TOP + totalRows * STAVE_Y_GAP;
 
     // VexFlow renderer
@@ -83,22 +97,38 @@ export default function StaffCanvas() {
             host.replaceChildren()
         }
 
-        layout.forEach(({ x, y, width }) => {
-            new Stave(x, y, width).setContext(ctx).draw();
+        layout.forEach(({ i, row, col, x, y, width }) => {
+            const stave = new Stave(x, y, width);
+
+            if (col === 0) {
+                const systemClef = getSystemStartClef(row);
+                stave.addClef(systemClef);
+            }
+
+            stave.setContext(ctx).draw();
+
+            const eventHere = clefEvents.find(e => e.atMeasureIndex === i);
+            if (eventHere && col !== 0) {
+                const tickables = [new ClefNote(eventHere.clef, 'small') ];
+                const voice = new Voice({ num_beats: 4, beat_value: 4 }).setMode(Voice.Mode.SOFT);
+                voice.addTickables(tickables);
+                new Formatter().joinVoices([voice]).formatToStave([voice], stave);
+                voice.draw(ctx, stave);
+            }
         });
 
         return () => {
             const svg = ctx?.svg ?? host.querySelector('svg');
             svg?.replaceChildren?.();
         }
-    }, [layout, svgWidth, svgHeight]);
+    }, [layout, svgWidth, svgHeight, measuresPerRow, clefEvents, getSystemStartClef]);
 
 
-    useEffect(() => {
-        if (selectedMeasureId && !layout.some(l => l.id === selectedMeasureId)) {
-            setSelectedMeasureId(null);
-        }
-    }, [layout, selectedMeasureId])
+    // useEffect(() => {
+    //     if (selectedMeasureId && !layout.some(l => l.id === selectedMeasureId)) {
+    //         setSelectedMeasureId(null);
+    //     }
+    // }, [layout, selectedMeasureId])
 
 
     const handleBgClick = (e) => {e.preventDefault(); clearSelection();}
