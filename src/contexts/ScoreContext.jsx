@@ -9,13 +9,18 @@ const initialState = {
     selectedMeasureId: null,
     measuresPerRow: 3,
     defaultClef: 'treble',
-    clefEvents: [] 
+    clefEvents: [],
+    entry: { duration: 'q', accidental: null},
 };
 
 export const actions = {
     SET_CLEF_AT_MEASURE: 'SET_CLEF_AT_MEASURE',
     REMOVE_CLEF_AT_MEASURE: 'REMOVE_CLEF_AT_MEASURE',
     SET_MEASURES_PER_ROW: 'SET_MEASURES_PER_ROW',
+
+    SET_ENTRY_DURATION: 'SET_ENTRY_DURATION',
+    SET_ENTRY_ACCIDENTAL: 'SET_ENTRY_ACCIDENTAL',
+    ADD_ITEM_AT_MEASURE: 'ADD_ITEM_AT_MEASURE',
 }
 
 // --- ID and Normalizer
@@ -171,6 +176,36 @@ function reducer(state, action) {
             };
         }
 
+        case actions.SET_ENTRY_DURATION: {
+            const dur = action.payload;
+            return {
+                ...state,
+                entry: { ...state.entry, duration: dur}
+            };
+        }
+
+        case actions.SET_ENTRY_ACCIDENTAL: {
+            const acc = action.payload;
+            return {
+                ...state, entry: { ...state.entry, accidental: acc }
+            };
+        }
+
+        case actions.ADD_ITEM_AT_MEASURE: {
+            const { atMeasureIndex, item } = action.payload;
+            if (
+                typeof atMeasureIndex !== 'number' ||
+                atMeasureIndex < 0 ||
+                atMeasureIndex >= state.measures.length ||
+                !item
+            ) return state;
+
+            const nextMeasures = state.measures.map((m, i) =>
+                i === atMeasureIndex ? { ...m, notes: [...(m.notes || []), item] } : m
+            );
+            return { ...state, measures: nextMeasures };
+        }
+
 
         default: {
             if (process.env.NODE_ENV !== 'production') {
@@ -254,24 +289,66 @@ export default function ScoreProvider({ initialMeasures = [], children }) {
             return last?.clef || state.defaultClef || 'treble';
         };
 
+
+        const setEntryDuration = (dur) =>
+            dispatch({ type: actions.SET_ENTRY_DURATION, payload: dur });
+
+        const setEntryAccidental = (acc) =>
+            dispatch({ type: actions.SET_ENTRY_ACCIDENTAL, payload: acc });
+
+        const addItemAtMeasureIndex = (atMeasureIndex, item) => 
+            dispatch({ type: actions.ADD_ITEM_AT_MEASURE, payload: {atMeasureIndex, item } });
+
+        const addNoteToSelected = (pitch, duration) => {
+            const selId = state.selectedMeasureId;
+            if (!selId) return;
+            const i = idToIndex.get(selId);
+            if (typeof i !== 'number') return;
+            addItemAtMeasureIndex(i, { pitch, duration });
+        }
+
+        const addRestToSelected = (duration) => {
+            const selId = state.selectedMeasureId;
+            if (!selId) return;
+            const i = idToIndex.get(selId);
+            if (typeof i !== 'number') return;
+            addItemAtMeasureIndex(i, { duration });
+        }
+
+        const addNote = (pitch) => {
+            const selId = state.selectedMeasureId;
+            const dur = state.entry?.duration || 'q';
+            const accidental = state.entry?.accidental ?? null;
+            if (!selId || !dur) return;
+
+            const i = idToIndex.get(selId);
+            if (typeof i !== 'number') return;
+
+            // addItemAtMeasureIndex(i, { pitch, duration: dur });
+            dispatch({
+                type: actions.ADD_ITEM_AT_MEASURE,
+                payload: { atMeasureIndex: i, item: { pitch, duration: dur, accidental} },
+            });
+        };
+ 
+
         return {
             measures: state.measures,
             selectedMeasureId: state.selectedMeasureId,
             measuresPerRow: state.measuresPerRow,
             defaultClef: state.defaultClef,
             clefEvents: state.clefEvents,
+            entry: state.entry,
 
-            selectMeasure,
-            clearSelection,
-            addMeasure,
-            insertBefore,
-            removeMeasure,
+            selectMeasure, clearSelection, addMeasure,
+            insertBefore, removeMeasure,
 
-            setMeasuresPerRow,
-            setClefAtMeasureIndex,
-            removeClefAtMeasureIndex,
-            setClefAtSelectedMeasure,
-            removeClefAtSelectedMeasure,
+            setMeasuresPerRow, setClefAtMeasureIndex,
+            removeClefAtMeasureIndex, setClefAtSelectedMeasure, removeClefAtSelectedMeasure,
+
+            setEntryDuration, setEntryAccidental,
+            addItemAtMeasureIndex, addNoteToSelected, addRestToSelected,
+            addNote,
 
             idToIndex,
 
@@ -284,3 +361,10 @@ export default function ScoreProvider({ initialMeasures = [], children }) {
     return <ScoreContext.Provider value={value}>{children}</ScoreContext.Provider>
 }
 // -- Hook
+export function useScore() {
+    const context = useContext(ScoreContext);
+    if (!context) {
+      throw new Error('useScore must be used within a ScoreProvider');
+    }
+    return context;
+}

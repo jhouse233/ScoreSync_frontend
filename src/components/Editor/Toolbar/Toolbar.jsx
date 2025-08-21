@@ -216,15 +216,22 @@ export default function Toolbar({ isKeyBoardVisible, toggleKeyboard }){
 
     const { 
         selectedMeasureId, 
-        addMeasure, 
-        insertBefore, 
-        removeMeasure,
+        addMeasure, insertBefore, removeMeasure,
         setClefAtSelectedMeasure,
+        setEntryDuration, setEntryAccidental,
+        addRestToSelected,
     } = useScore();
+
     const handleSelectedNote = (alt, groupKey) => {
         switch (groupKey) {
-            case 'notes':
-            case 'rests':
+            case 'notes': {
+                const dur = durationMap[alt] || null;
+                setSelectedDuration(dur);
+                if (dur) setEntryDuration(dur);
+                break;
+            }
+
+            case 'rests': {
                 const durationMap = {
                     '64th note': '64',
                     '32nd note': '32',
@@ -242,15 +249,25 @@ export default function Toolbar({ isKeyBoardVisible, toggleKeyboard }){
                     'half rest': 'hr',
                     'whole rest': 'wr',
                 };
-                setSelectedDuration(durationMap[alt] || null);
+                const dur = durationMap[alt] || null;
+                setSelectedDuration(dur);
+                if (selectedMeasureId && dur) addRestToSelected(dur);
                 break;
+            }
 
-            case 'accidentals':
+            case 'accidentals': {
                 const accidentalMap = {
                     'natural': 'n',
                     'sharp': '#',
                     'flat': 'b',
                 };
+                
+                const newAcc = accidentalMap[alt] ?? null;
+                const nextAcc = (selectedAccidental === newAcc ? null : newAcc);
+                setSelectedAccidental(newAcc);
+                setEntryAccidental(nextAcc);
+                break;
+            }
 
                 const newAccidental = accidentalMap[alt];
                 setSelectedAccidental(

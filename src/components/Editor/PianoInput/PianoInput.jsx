@@ -10,8 +10,14 @@ import downArrowIcon from '../../../assets/downarrow.svg';
 
 export default function PianoInput({ onClose }) {
     const { playNote } = useSynth();
-    const { addNote } = useScore();
+    // const { addNote } = useScore();
     const [audioStarted, setAudioStarted] = useState(false);
+
+    const {
+        selectedMeasureId,
+        entry,
+        addNote
+    } = useScore();
 
     const startAudio = () => {
         Tone.start().then(() => {
@@ -19,29 +25,31 @@ export default function PianoInput({ onClose }) {
             setAudioStarted(true);
         })
     }
-    const handleKeyPress = async (note) => {
 
-
-        const pitch = note
-            .toLowerCase()
-            .replace('#', '#')
-            .replace(/(\d)/, '/$1');
-        console.log('Piano pressed', pitch);
-        addNote(pitch);
-        playNote(note);
+    const formatPitchForVex = (raw, overrideAccidental) => {
+        const m = raw.match(/^([A-Ga-g])(#{1}|b{1})?(\d)$/);
+        if (!m) return raw.toLowerCase().replace(/(\d)/, '/$1');   
+        const [, letter, keyAcc = '', octave] = m;
+        const picked = overrideAccidental ?? keyAcc;
+        const accOut = picked === 'n' ? '' : picked;
+        return `${letter.toLowerCase()}${accOut}/${octave}`; 
+    
     }
 
+    const handleKeyPress = async (rawNote) => {
+        if (!audioStarted) await startAudio();
 
-    // const handleKeyClick = (note) => {
-    //     const pitch = note
-    //         .toLowerCase()
-    //         .replace('#', '#')
-    //         .replace(/(\d)/, '/$1');
+        if (!selectedMeasureId || !entry?.duration) {
+            playNote(rawNote);
+            return;
+        }
 
-    //     addNote(pitch);
-    // }
+        const pitch = formatPitchForVex(rawNote, entry.accidental);
+        addNote(pitch);
+        playNote(rawNote);
+    };
 
-    console.log('Rendering PianoInput, onKeyPress', handleKeyPress);
+    // console.log('Rendering PianoInput, onKeyPress', handleKeyPress);
 
     return (
         <div className="piano-input">

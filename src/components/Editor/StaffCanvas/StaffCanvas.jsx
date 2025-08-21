@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { Renderer, Stave, StaveNote, Voice, Formatter, ClefNote } from 'vexflow';
+import { Renderer, Stave, StaveNote, Voice, Formatter, ClefNote, Accidental } from 'vexflow';
 import { useScore } from '../../../contexts/ScoreContext';
 
 
 import './StaffCanvas.css'
 
 export default function StaffCanvas() {
-    const { measures } = useScore();
+    // const { measures } = useScore();
     // const { measuresPerRow } = useScore();
 
     // Layout Constants
@@ -32,6 +32,7 @@ export default function StaffCanvas() {
    
 
     const {
+        measures,
         selectedMeasureId,
         selectMeasure,
         clearSelection,
@@ -78,6 +79,16 @@ export default function StaffCanvas() {
     const hostRef = useRef(null);
     const rendererRef = useRef(null);
 
+
+
+    const isRestDuration = (dur) => typeof dur === 'string' && /r$/.test(dur);
+    const defaultRestKeyForClef = (clef) => {
+        if (clef === 'bass') return 'd/3';
+        if (clef === 'alto') return 'c/4';
+        if (clef === 'tenor') return 'a/3';
+        return 'b/4';
+    }
+
     useEffect(() => {
         const host = hostRef.current;
         if (!host) return;
@@ -107,11 +118,62 @@ export default function StaffCanvas() {
 
             stave.setContext(ctx).draw();
 
+            const tickables =[];
+    
             const eventHere = clefEvents.find(e => e.atMeasureIndex === i);
             if (eventHere && col !== 0) {
-                const tickables = [new ClefNote(eventHere.clef, 'small') ];
-                const voice = new Voice({ num_beats: 4, beat_value: 4 }).setMode(Voice.Mode.SOFT);
-                voice.addTickables(tickables);
+                // const tickables = [new ClefNote(eventHere.clef, 'small') ];
+                // const voice = new Voice({ num_beats: 4, beat_value: 4 }).setMode(Voice.Mode.SOFT);
+                // voice.addTickables(tickables);
+                // new Formatter().joinVoices([voice]).formatToStave([voice], stave);
+                // voice.draw(ctx, stave);
+                tickables.push(new ClefNote(eventHere.clef, 'small'));
+            }
+
+            const effectiveClef = getEffectiveClefAtMeasure(i);
+            const items = Array.isArray(measures[i]?.notes) ? measures[i].notes : [];
+
+            for (const n of items) {
+                const duration = n?.duration;
+                if (!duration) continue;
+
+                if (isRestDuration(duration)) {
+                    const restKey = n.restKey || defaultRestKeyForClef(effectiveClef);
+                    const vfRest = new StaveNote({
+                        keys: [restKey],
+                        duration,
+                    });
+                    tickables.push(vfRest);
+                } else {
+                    const keys = Array.isArray(n.keys)
+                    ? n.keys.map(formatPitch)
+                    : [formatPitch(n.pitch || 'c/4')];
+
+                    const vfNote = new StaveNote({
+                        keys,
+                        duration,
+                        clef: effectiveClef,
+                    });
+
+                    if (n.accidental) {
+                        // vfNote.addAccidental(0, new Accidental(n.accidental));
+                        vfNote.addModifier(new Accidental(n.accidental), 0);
+                    } else {
+                        keys.forEach((k, idx) => {
+                            const m = k.match(/^[a-g](b|#)/i);
+                            if (m) vfNote.addModifier(new Accidental(m[1]));
+                        })
+                    }
+
+
+                    tickables.push(vfNote);
+                }
+            }
+            if (tickables.length > 0) {
+                const voice = new Voice({ num_beats: 4, beat_value: 4 })
+                    .setMode(Voice.Mode.SOFT)
+                    .addTickables(tickables);
+
                 new Formatter().joinVoices([voice]).formatToStave([voice], stave);
                 voice.draw(ctx, stave);
             }
@@ -121,7 +183,7 @@ export default function StaffCanvas() {
             const svg = ctx?.svg ?? host.querySelector('svg');
             svg?.replaceChildren?.();
         }
-    }, [layout, svgWidth, svgHeight, measuresPerRow, clefEvents, getSystemStartClef]);
+    }, [layout, svgWidth, svgHeight, measuresPerRow, clefEvents, getSystemStartClef, getEffectiveClefAtMeasure, measures]);
 
 
     // useEffect(() => {
