@@ -4,6 +4,7 @@ import { useScore } from '../../../contexts/ScoreContext';
 import './Toolbar.css';
 import ToolbarButton from './ToolbarButton';
 import PianoToggleButton from './ToolbarActionButtons/PianoToggleButton';
+import DropdownMenu from '../../DropdownMenu/DropdownMenu';
 
 // Note images
 import sixtyFourthNote from '../../../assets/sixty-fourth-note.svg';
@@ -73,6 +74,7 @@ import addMeasure from '../../../assets/addmeasure.svg';
 import insertMeasure from '../../../assets/insertmeasure.svg';
 import trebleClef from '../../../assets/trebleclef.svg';
 import bassClef from '../../../assets/bassclef.svg';
+import timeSignature from '../../../assets/time-signature.svg'
 import metronome from '../../../assets/metronome.svg';
 import barline from '../../../assets/barline.svg';
 import doubleBarline from '../../../assets/doublebarline.svg';
@@ -173,6 +175,7 @@ const measureEditButtons =[
 const clefChangeButtons = [
     { icon: trebleClef, alt: 'treble clef'},
     { icon: bassClef, alt: 'bass clef'},
+    { icon: timeSignature, alt: 'time signature'},
     { icon: metronome, alt: 'metronome'},
 ];
 
@@ -199,11 +202,65 @@ const toolbarConfig = {
         { key: 'octaveShift', buttons: octaveShiftButtons, className: 'toolbar__group-octave-shift-buttons' },
     ],
     Measure: [
-       { key: 'measure', buttons: measureEditButtons, className: 'toolbar_group-measure' },
+       { key: 'measure', buttons: measureEditButtons, className: 'toolbar__group-measure' },
        { key: 'clef', buttons: clefChangeButtons, className: 'toolbar__group-clef' },
        { key: 'barline', buttons: barlineChangeButtons, className: 'toolbar__group-barline'}
     ]
 };
+
+const timeSignatureOptions = ['2/4', '3/4', '4/4', '6/8', '9/8', '12/8']
+function handleSelectTimeSignature(sig) {
+    console.log('Selected time signature', sig);
+}
+
+function TimeSignatureDropdown({ icon, alt, disabled, onSelect }) {
+    const [open, setOpen] = useState(false);
+
+    const toggle = () => {
+        if (disabled) return;
+        setOpen((o) => !o)
+    };
+
+    const handlePick = (sig) => {
+        onSelect?.(sig);
+        setOpen(false);
+
+    }
+    return(
+        <div className="toolbar__dropdown-anchor">
+            <button 
+                type='button'
+                className="toolbar__button"
+                onClick={toggle}
+                disabled={disabled}
+                title={disabled ? 'Select a measure first' : alt}
+                aria-label={alt}
+            >
+                <img src={icon} alt={alt} />
+            </button>
+
+            <DropdownMenu
+                title='Time Signature'
+                isOpen={open}
+                onClose={() => setOpen(false)}
+            >
+                <ul className="dropdown-menu__list">
+                    {timeSignatureOptions.map((sig) => (
+                        <li key={sig}>
+                            <button
+                                type='button'
+                                className="dropdown-menu__item"
+                                onClick={() => handlePick(sig)}
+                            >
+                                {sig}
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            </DropdownMenu>
+        </div>
+    );
+}
 
 
 
@@ -264,16 +321,16 @@ export default function Toolbar({ isKeyBoardVisible, toggleKeyboard }){
                 
                 const newAcc = accidentalMap[alt] ?? null;
                 const nextAcc = (selectedAccidental === newAcc ? null : newAcc);
-                setSelectedAccidental(newAcc);
+                setSelectedAccidental(nextAcc);
                 setEntryAccidental(nextAcc);
                 break;
             }
 
-                const newAccidental = accidentalMap[alt];
-                setSelectedAccidental(
-                    selectedAccidental === newAccidental ? null : newAccidental
-                );
-                break;
+                // const newAccidental = accidentalMap[alt];
+                // setSelectedAccidental(
+                //     selectedAccidental === newAccidental ? null : newAccidental
+                // );
+                // break;
             
             case 'articulations':
                 setSelectedArticulation(
@@ -344,6 +401,21 @@ export default function Toolbar({ isKeyBoardVisible, toggleKeyboard }){
                                     const isMeasureGroup = group.key === 'measure';
                                     const requireSelection = isMeasureGroup && button.alt !== 'add measure';
                                     const disabled = requireSelection && !selectedMeasureId;
+
+                                    const isTimeSignature = group.key === 'clef' && button.alt === 'time signature';
+                                    const disabledTimeSig = !selectedMeasureId;
+
+                                    if (isTimeSignature) {
+                                        return (
+                                            <TimeSignatureDropdown 
+                                                key={`${group.key}-${idx}`}
+                                                icon={button.icon}
+                                                alt={button.alt}
+                                                disabled={disabledTimeSig}
+                                                onSelect={handleSelectTimeSignature}
+                                            />
+                                        )
+                                    }
                                     
                                     return (
                                         <ToolbarButton 
