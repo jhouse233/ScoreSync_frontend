@@ -128,12 +128,10 @@
     display: inline-block;
 }
   
-
-.dropdown-menu {
-    position: absolute;
-    top: 44px;   
+.toolbar__dropdown-anchor .dropdown-menu {
     left: 0;
-    z-index: 1000;
+    right: auto;
+    top: 44px;         
 }
   
 .dropdown-menu__list {
@@ -149,4 +147,5 @@
     width: 100%;
     text-align: left;
     cursor: pointer;
+    color: black;
 }

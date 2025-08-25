@@ -25,5 +25,6 @@
 }
 .dropdown-menu__title {
     z-index: 1000;
+    color: black;
 }
 .dropdown-menu__content {}
