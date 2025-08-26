@@ -6,11 +6,6 @@ import { useScore } from '../../../contexts/ScoreContext';
 import './StaffCanvas.css'
 
 export default function StaffCanvas() {
-    // const { measures } = useScore();
-    // const { measuresPerRow } = useScore();
-
-    // Layout Constants
-    // const MEASURES_PER_ROW = 3;
     const MEASURE_WIDTH = 400;
     const FIRST_MEASURE_WIDTH = MEASURE_WIDTH;
     const START_X = 60;
@@ -23,14 +18,7 @@ export default function StaffCanvas() {
     const HIL_PAD_X = 1;
     const HIL_PAD_Y = 40;
     const HIL_RADIUS = 6;
-
-    // State
-    // const [selectedMeasureId, setSelectedMeasureId] = useState(null);
-
-    // const selectMeasure = (id) => setSelectedMeasureId(id);
-    // const clearSelection = () => setSelectedMeasureId(null);
    
-
     const {
         measures,
         selectedMeasureId,
@@ -56,6 +44,11 @@ export default function StaffCanvas() {
         return accidental ? `${note}${accidental}/${octave}` : `${note}/${octave}`
     }
 
+    function parseTimeSig(ts = '4/4') {
+        const [num, denom] = (ts || '4/4').split('/').map(n => parseInt(n, 10));
+        return { num_beats: num || 4, beat_value: denom || 4 };
+    }
+
 
     // Layout geometry for every measure
     const layout = useMemo(() => {
@@ -78,8 +71,6 @@ export default function StaffCanvas() {
     // VexFlow renderer
     const hostRef = useRef(null);
     const rendererRef = useRef(null);
-
-
 
     const isRestDuration = (dur) => typeof dur === 'string' && /r$/.test(dur);
     const defaultRestKeyForClef = (clef) => {
@@ -111,9 +102,20 @@ export default function StaffCanvas() {
         layout.forEach(({ i, row, col, x, y, width }) => {
             const stave = new Stave(x, y, width);
 
+            const thisTS = 
+                measures[i]?.timeSignature
+                    ?? (i > 0 ? (measures[i - 1]?.timeSignature || '4/4') : '4/4');
+            const prevTS = i > 0 ? (measures[i - 1]?.timeSignature || '4/4') : null;
+            // const showTimeSig = (col === 0) || (prevTS && prevTS !== thisTS);
+            const showTimeSig = (i === 0) || (i > 0 && prevTS !== thisTS);
+
             if (col === 0) {
                 const systemClef = getSystemStartClef(row);
                 stave.addClef(systemClef);
+            }
+
+            if (showTimeSig) {
+                stave.addTimeSignature(thisTS);
             }
 
             stave.setContext(ctx).draw();
@@ -122,11 +124,6 @@ export default function StaffCanvas() {
     
             const eventHere = clefEvents.find(e => e.atMeasureIndex === i);
             if (eventHere && col !== 0) {
-                // const tickables = [new ClefNote(eventHere.clef, 'small') ];
-                // const voice = new Voice({ num_beats: 4, beat_value: 4 }).setMode(Voice.Mode.SOFT);
-                // voice.addTickables(tickables);
-                // new Formatter().joinVoices([voice]).formatToStave([voice], stave);
-                // voice.draw(ctx, stave);
                 tickables.push(new ClefNote(eventHere.clef, 'small'));
             }
 
@@ -169,8 +166,10 @@ export default function StaffCanvas() {
                     tickables.push(vfNote);
                 }
             }
+
             if (tickables.length > 0) {
-                const voice = new Voice({ num_beats: 4, beat_value: 4 })
+                const { num_beats, beat_value } = parseTimeSig(thisTS);
+                const voice = new Voice({ num_beats, beat_value })
                     .setMode(Voice.Mode.SOFT)
                     .addTickables(tickables);
 
@@ -185,20 +184,11 @@ export default function StaffCanvas() {
         }
     }, [layout, svgWidth, svgHeight, measuresPerRow, clefEvents, getSystemStartClef, getEffectiveClefAtMeasure, measures]);
 
-
-    // useEffect(() => {
-    //     if (selectedMeasureId && !layout.some(l => l.id === selectedMeasureId)) {
-    //         setSelectedMeasureId(null);
-    //     }
-    // }, [layout, selectedMeasureId])
-
-
     const handleBgClick = (e) => {e.preventDefault(); clearSelection();}
     const handleDbClick = (id) => {
         console.log('Doubleclick measure', id);
         selectMeasure(id);
     }
-
 
     return (
         <div className="staff__canvas">

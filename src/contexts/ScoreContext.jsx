@@ -21,6 +21,8 @@ export const actions = {
     SET_ENTRY_DURATION: 'SET_ENTRY_DURATION',
     SET_ENTRY_ACCIDENTAL: 'SET_ENTRY_ACCIDENTAL',
     ADD_ITEM_AT_MEASURE: 'ADD_ITEM_AT_MEASURE',
+
+    SET_TIME_SIGNATURE: 'SET_TIME_SIGNATURE',
 }
 
 // --- ID and Normalizer
@@ -32,7 +34,8 @@ const normalizeMeasures = (input = []) =>
         if (Array.isArray(m)) return { id: createId(), notes: m };
         const id = m?.id ?? createId();
         const notes = Array.isArray(m?.notes) ? m.notes : [];
-        return { ...m, id, notes };
+        const timeSignature = typeof m?.timeSignature === '';
+        return { ...m, id, notes, timeSignature };
     });
 
 // Lookups
@@ -113,7 +116,9 @@ function reducer(state, action) {
             return { ...state, selectedMeasureId: null };
 
         case 'ADD': {
-            const m = createBlankMeasure();
+            // const m = createBlankMeasure();
+            const prevTS = state.measures.at(-1)?.timeSignature ?? '4/4';
+            const m = { id: createId(), notes: [], timeSignature: prevTS };
             const insertedAt = state.measures.length;
             return { 
                 ...state,
@@ -128,7 +133,12 @@ function reducer(state, action) {
             const idx = state.measures.findIndex(m => m.id === targetId);
             if (idx < 0) return state;
 
-            const m = createBlankMeasure();
+            // const m = createBlankMeasure();
+            const inheritTS = 
+                (idx > 0 ? state.measures[idx - 1]?.timeSignature : state.measures[idx]?.timeSignature)
+                ?? '4/4';
+            const m = { id: createId(), notes: [], timeSignature: inheritTS }
+            
             const nextMeasures = state.measures.slice();
             nextMeasures.splice(idx, 0, m);
             return { 
@@ -206,6 +216,16 @@ function reducer(state, action) {
             return { ...state, measures: nextMeasures };
         }
 
+        case actions.SET_TIME_SIGNATURE: {
+            const { measureId, timeSignature } = action.payload;
+            return {
+                ...state,
+                measures: state.measures.map(m =>
+                    m.id === measureId ? { ...m, timeSignature } : m
+                ),
+            };
+        }
+
 
         default: {
             if (process.env.NODE_ENV !== 'production') {
@@ -227,6 +247,12 @@ export default function ScoreProvider({ initialMeasures = [], children }) {
             dispatch({ type: 'INIT', payload: initialMeasures });
         }
     }, [initialMeasures, state.measures.length]);
+
+    const setTimeSignatureAtSelectedMeasure = (sig) => {
+        const id = state.selectedMeasureId;
+        if (!id) return;
+        dispatch({ type: actions.SET_TIME_SIGNATURE, payload: { measureId: id, timeSignature: sig } });
+    };
 
     const value = useMemo(() => {
         const selectMeasure = (id) => dispatch({ type: 'SELECT', payload: id });
@@ -354,6 +380,8 @@ export default function ScoreProvider({ initialMeasures = [], children }) {
 
             getSystemStartClef,
             getEffectiveClefAtMeasure,
+
+            setTimeSignatureAtSelectedMeasure,
         };
     }, [state])
     

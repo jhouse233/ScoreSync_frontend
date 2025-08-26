@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useScore } from '../../../contexts/ScoreContext';
 
 import './Toolbar.css';
@@ -88,9 +88,6 @@ import zoomin from '../../../assets/zoomin.svg';
 import zoomout from '../../../assets/zoomout.svg';
 
 const tabsButtons = ['Note', 'Articulation', 'Expression', 'Measure', 'Text'];
-// const actionButtons = [
-//     { icon: undo}
-// ]
 
 const noteButtons = [
     { icon: sixtyFourthNote, alt: '64th note' },
@@ -209,9 +206,7 @@ const toolbarConfig = {
 };
 
 const timeSignatureOptions = ['2/4', '3/4', '4/4', '6/8', '9/8', '12/8']
-function handleSelectTimeSignature(sig) {
-    console.log('Selected time signature', sig);
-}
+
 
 function TimeSignatureDropdown({ icon, alt, disabled, onSelect }) {
     const [open, setOpen] = useState(false);
@@ -277,7 +272,13 @@ export default function Toolbar({ isKeyBoardVisible, toggleKeyboard }){
         setClefAtSelectedMeasure,
         setEntryDuration, setEntryAccidental,
         addRestToSelected,
+        setTimeSignatureAtSelectedMeasure,
     } = useScore();
+
+    const handleSelectTimeSignature = useCallback((sig) => {
+        if (!selectedMeasureId) return;
+        setTimeSignatureAtSelectedMeasure(sig);
+    }, [selectedMeasureId, setTimeSignatureAtSelectedMeasure]);
 
     const handleSelectedNote = (alt, groupKey) => {
         switch (groupKey) {
@@ -325,12 +326,6 @@ export default function Toolbar({ isKeyBoardVisible, toggleKeyboard }){
                 setEntryAccidental(nextAcc);
                 break;
             }
-
-                // const newAccidental = accidentalMap[alt];
-                // setSelectedAccidental(
-                //     selectedAccidental === newAccidental ? null : newAccidental
-                // );
-                // break;
             
             case 'articulations':
                 setSelectedArticulation(
