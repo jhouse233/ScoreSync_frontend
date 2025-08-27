@@ -221,7 +221,8 @@ function TimeSignatureDropdown({ icon, alt, disabled, onSelect }) {
         setOpen(false);
 
     }
-    return(
+
+    return (
         <div className="toolbar__dropdown-anchor">
             <button 
                 type='button'

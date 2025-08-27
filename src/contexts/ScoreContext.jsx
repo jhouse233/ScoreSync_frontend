@@ -25,16 +25,53 @@ export const actions = {
     SET_TIME_SIGNATURE: 'SET_TIME_SIGNATURE',
 }
 
+// Duration and measure capacity
+const UNIT = 64;
+function parseTS(ts = '4/4') {
+    const [n, d] = String(ts || '4/4').split('/').map(Number);
+    return { n: n || 4, d: d || 4 };
+}
+
+function durToUnits(d) {
+    if (!d) return 0;
+    const s = String(d);
+
+    const core = s.endsWith('r') ? s.slice(0, -1) : s;
+
+    switch (core) {
+        case 'w': return 64;
+        case 'h': return 32;
+        case 'q': return 16;
+        default: {
+            const n = Number(core);
+            if (n && (UNIT % n === 0)) return UNIT / n;
+            return 0;
+        }
+    }
+}
+
+
+
+function capacityUnits(ts) {
+    const { n, d } = parseTS(ts);
+    return n * (UNIT / d);
+}
+
+function usedUnits(noteItems = []) {
+    return noteItems.reduce((sum, it) => sum + durToUnits(it.duration), 0);
+}
+
+
 // --- ID and Normalizer
 const createId = () => nanoid();
 const createBlankMeasure = () => ({ id: createId(), notes: [] });
 
 const normalizeMeasures = (input = []) =>
     input.map((m) => {
-        if (Array.isArray(m)) return { id: createId(), notes: m };
+        if (Array.isArray(m)) return { id: createId(), notes: m, timeSignature: '4/4' };
         const id = m?.id ?? createId();
         const notes = Array.isArray(m?.notes) ? m.notes : [];
-        const timeSignature = typeof m?.timeSignature === '';
+        const timeSignature = (typeof m?.timeSignature === 'string' && m.timeSignature) ? m.timeSignature: '4/4';
         return { ...m, id, notes, timeSignature };
     });
 
@@ -138,7 +175,7 @@ function reducer(state, action) {
                 (idx > 0 ? state.measures[idx - 1]?.timeSignature : state.measures[idx]?.timeSignature)
                 ?? '4/4';
             const m = { id: createId(), notes: [], timeSignature: inheritTS }
-            
+
             const nextMeasures = state.measures.slice();
             nextMeasures.splice(idx, 0, m);
             return { 
@@ -210,9 +247,36 @@ function reducer(state, action) {
                 !item
             ) return state;
 
+            const measure = state.measures[atMeasureIndex];
+            if (!measure) return state;
+
+            // Prevent overfilling
+            const ts = measure.timeSignature || '4/4';
+            const cap = capacityUnits(ts);
+            const used = usedUnits(measure.notes || []);
+            const inc = durToUnits(item.duration);
+
+            if (inc <= 0) {
+                if (process.env.NODE_ENV !== 'production') {
+                    console.warn(`Blocked: unknown/zero duration "${item.duration}"`)
+                }
+                return state;
+            }
+
+            if (used + inc > cap) {
+                if (process.env.NODE_ENV !== 'production') {
+                    console.warn(
+                        `Blocked: adding ${item.duration} would exceed capacity in measure ${atMeasureIndex}` +
+                        `(${used} + ${inc} > ${cap}) fro TS ${ts}`
+                    );
+                }
+                return state;
+            }
+
             const nextMeasures = state.measures.map((m, i) =>
                 i === atMeasureIndex ? { ...m, notes: [...(m.notes || []), item] } : m
             );
+
             return { ...state, measures: nextMeasures };
         }
 
