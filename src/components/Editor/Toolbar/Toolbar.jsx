@@ -181,6 +181,26 @@ const barlineChangeButtons = [
     { icon: doubleBarline, alt: 'double barline'}
 ];
 
+const noteDurationMap = {
+    '64th note': '64',
+    '32nd note': '32',
+    '16th note': '16',
+    '8th note':  '8',
+    'quarter note': 'q',
+    'half note': 'h',
+    'whole note': 'w',
+};
+  
+const restDurationMap = {
+    '64th rest': '64r',
+    '32nd rest': '32r',
+    '16th rest': '16r',
+    '8th rest':  '8r',
+    'quarter rest': 'qr',
+    'half rest': 'hr',
+    'whole rest': 'wr',
+};
+
 
 const toolbarConfig = {
     Note: [
@@ -284,31 +304,14 @@ export default function Toolbar({ isKeyBoardVisible, toggleKeyboard }){
     const handleSelectedNote = (alt, groupKey) => {
         switch (groupKey) {
             case 'notes': {
-                const dur = durationMap[alt] || null;
+                const dur = noteDurationMap[alt] || null;
                 setSelectedDuration(dur);
                 if (dur) setEntryDuration(dur);
                 break;
             }
 
             case 'rests': {
-                const durationMap = {
-                    '64th note': '64',
-                    '32nd note': '32',
-                    '16th note': '16',
-                    '8th note': '8',
-                    'quarter note': 'q',
-                    'half note': 'h',
-                    'whole note': 'w',
-
-                    '64th rest': '64r',
-                    '32nd rest': '32r',
-                    '16th rest': '16r',
-                    '8th rest': '8r',
-                    'quarter rest': 'qr',
-                    'half rest': 'hr',
-                    'whole rest': 'wr',
-                };
-                const dur = durationMap[alt] || null;
+                const dur = restDurationMap[alt] || null;
                 setSelectedDuration(dur);
                 if (selectedMeasureId && dur) addRestToSelected(dur);
                 break;

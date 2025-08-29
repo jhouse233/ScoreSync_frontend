@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { Renderer, Stave, StaveNote, Voice, Formatter, ClefNote, Accidental } from 'vexflow';
+import { Renderer, Stave, StaveNote, Voice, Formatter, ClefNote, Accidental, Beam, Fraction } from 'vexflow';
 import { useScore } from '../../../contexts/ScoreContext';
 
 
@@ -47,6 +47,27 @@ export default function StaffCanvas() {
     function parseTimeSig(ts = '4/4') {
         const [num, denom] = (ts || '4/4').split('/').map(n => parseInt(n, 10));
         return { num_beats: num || 4, beat_value: denom || 4 };
+    }
+
+    // Beam notes
+    function beamGroupsForTS(ts = '4/4') {
+        const [nRaw, dRaw] = String(ts).split('/');
+        const n = Number(nRaw) || 4;
+        const d = Number(dRaw) || 4;
+        const groups = [];
+        const add = (num, den, count) => { for (let i = 0; i < count; i++) groups.push(new Fraction(num, den)) };
+
+        if (d === 8 && n % 3 === 0) {
+            add(3, 8, n / 3);
+            return groups;
+        }
+
+        if (d === 4) { add(1, 4, n); return groups; }
+        if (d === 2) { add(1, 2, n); return groups; }
+        if (d === 8) { add(1, 8, n); return groups; }
+
+        add(1, d, n);
+        return groups;
     }
 
 
@@ -121,6 +142,7 @@ export default function StaffCanvas() {
             stave.setContext(ctx).draw();
 
             const tickables =[];
+            const beamables = [];
     
             const eventHere = clefEvents.find(e => e.atMeasureIndex === i);
             if (eventHere && col !== 0) {
@@ -164,6 +186,11 @@ export default function StaffCanvas() {
 
 
                     tickables.push(vfNote);
+
+                    const base = String(duration).replace(/r$/, '');
+                    if (['8', '16', '32', '64'].some(b => base.startsWith(b))) {
+                        beamables.push(vfNote);
+                    }
                 }
             }
 
@@ -175,7 +202,15 @@ export default function StaffCanvas() {
 
                 new Formatter().joinVoices([voice]).formatToStave([voice], stave);
                 voice.draw(ctx, stave);
+
+                const beams = Beam.generateBeams(beamables, {
+                    groups: beamGroupsForTS(thisTS),
+                    beam_rests: false,
+                    maintain_stem_diretions: false,
+                });
+                beams.forEach(b => b.setContext(ctx).draw());
             }
+
         });
 
         return () => {
