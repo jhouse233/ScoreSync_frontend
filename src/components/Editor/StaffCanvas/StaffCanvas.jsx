@@ -199,15 +199,17 @@ export default function StaffCanvas() {
                 const voice = new Voice({ num_beats, beat_value })
                     .setMode(Voice.Mode.SOFT)
                     .addTickables(tickables);
-
-                new Formatter().joinVoices([voice]).formatToStave([voice], stave);
-                voice.draw(ctx, stave);
-
+                    
                 const beams = Beam.generateBeams(beamables, {
                     groups: beamGroupsForTS(thisTS),
                     beam_rests: false,
                     maintain_stem_diretions: false,
                 });
+
+                new Formatter().joinVoices([voice]).formatToStave([voice], stave);
+                voice.draw(ctx, stave);
+
+                
                 beams.forEach(b => b.setContext(ctx).draw());
             }
 
