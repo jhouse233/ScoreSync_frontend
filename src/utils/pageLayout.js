@@ -19,6 +19,8 @@ export const DEFAULT_LAYOUT = {
 
     minMeasureWidth: 120,
     maxMeasureWidth: 320,
+
+    maxMeasurePerSystem: 2,
 };
 
 export function estimateMeasureWidth(m, metrics) {
@@ -61,7 +63,10 @@ function packIntoSystems(measures, metrics) {
         const wouldOverflow = current.totalWidth + width > metrics.pageInnerWidth;
         const mustWrap = (wouldOverflow && current.measures.length > 0);
 
-        if (mustWrap) {
+        const countLimit = Number(metrics.maxMeasurePerSystem || 0);
+        const hitCountLimit = countLimit > 0 && current.measures.length > countLimit;
+
+        if (mustWrap || hitCountLimit) {
             systems.push(justifySystem(current, metrics.pageInnerWidth));
             current = newSystem();
         }
