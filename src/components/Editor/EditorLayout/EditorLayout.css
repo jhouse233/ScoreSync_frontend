@@ -1,23 +1,5 @@
-.keyboard-dock {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: calc(var(--kb-height, 280px) + env(safe-area-inset-bottom, 0px));
-    background: #0b1220;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 -8px 24px rgba(0,0,0,0.35);
-    z-index: 1000; 
-}
-  
-
-.keyboard-dock__inner {
-    height: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 12px clamp(12px, 2vw, 24px) calc(12px + env(safe-area-inset-bottom, 0px));
-    overflow-x: auto;
-    overflow-y: hidden;
+.editor {
+    min-height: 50vh;
     display: flex;
-    align-items: center;
+    flex-direction: column;
 }
