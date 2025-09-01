@@ -9,11 +9,28 @@
 
 }
 
-.staffcanvas__stage {
+.editor-viewport {
+    min-height: 60vh;
+    padding: 16px;
+    background: #F5F5F5;
+    display: flex;
+    justify-content: center;
+}
+
+.page__stack-outer {
+    margin: 24px auto;
+    position: relative;
+}
+
+.page__stack-inner {
+    position: relative;
+}
+
+/* .staffcanvas__stage {
     position: relative;
     display: inline-block;
     overflow: hidden;
-}
+} */
 
 .staffcanvas__stage,
 .staffcanvas__stage * {
@@ -28,16 +45,23 @@
 
 .staffcanvas__vf svg {
     display: block;
-    width: auto;
+    /* width: auto;
     height: auto;
-    pointer-events: none;
+    pointer-events: none; */
 }
-
+/* 
 .staffcanvas__overlay {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
+} */
+.staffcanvas__overlay {
+    position: absolute;
+    inset: 0;
+    /* pointer-events: none; */
+    /* width: 100%;
+    height: 100%; */
 }
 
 .staffcanvas__highlight {

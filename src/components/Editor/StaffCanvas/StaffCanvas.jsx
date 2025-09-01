@@ -7,14 +7,7 @@ import { useScore } from '../../../contexts/ScoreContext';
 import './StaffCanvas.css'
 
 export default function StaffCanvas() {
-    // const MEASURE_WIDTH = 400;
-    // const FIRST_MEASURE_WIDTH = MEASURE_WIDTH;
-    // const START_X = 60;
-    // const STAVE_PADDING_TOP = 60;
-    // const STAVE_PADDING_RIGHT = 60;
-    // const STAVE_HEIGHT = 140;
-    // const ROW_GAP = STAVE_PADDING_TOP;
-    // const STAVE_Y_GAP = STAVE_HEIGHT + ROW_GAP;
+
     const PAGE_GAP = 24;
     const LAYOUT = { ...DEFAULT_LAYOUT, maxMeasuresPerSystem: 4};
 
@@ -289,52 +282,57 @@ export default function StaffCanvas() {
 
     return (
         <div className="staff__canvas">
-            <div className="staffcanvas__composition-content">
-                <div className="staffcanvas__stage">
-                    <div ref={hostRef} className='staffcanvas__vf'/>
-                    <svg 
-                        className="staffcanvas__overlay"
-                        width={svgWidth}
-                        height={svgHeight}
-                        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-                    
-                    >
-                        <rect 
-                            x='0' y='0' width={svgWidth} 
-                            height={svgHeight} 
-                            fill='transparent' 
-                            onMouseDown={handleBgClick}
-                        />
+            <div className="editor-viewport">
 
-                        {frames.map(({ id, x, y, width, height }) => {
-                            const selected = isSelected(id);
-                            return (
-                                <g key={id}>
-                                    {selected && (
-                                        <rect 
-                                            x={x + HIL_PAD_X}
-                                            y={y + HIL_PAD_Y}
-                                            width={width - 2 * HIL_PAD_X}
-                                            height={height - 2.5 * HIL_PAD_Y}
-                                            rx={HIL_RADIUS}
-                                            ry={HIL_RADIUS}
-                                            className='staffcanvas__highlight'
-                                            strokeWidth='3'
-                                            pointerEvents='none'
+                <div className="page__stack-outer" style={{ width: DEFAULT_LAYOUT.pageWidth }}>
+                    <div className="page__stack-inner">
+
+                    
+                        <div ref={hostRef} className='staffcanvas__vf'/>
+                        <svg 
+                            className="staffcanvas__overlay"
+                            width={svgWidth}
+                            height={svgHeight}
+                            viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+                        
+                        >
+                            <rect 
+                                x='0' y='0' width={svgWidth} 
+                                height={svgHeight} 
+                                fill='transparent' 
+                                onMouseDown={handleBgClick}
+                            />
+
+                            {frames.map(({ id, x, y, width, height }) => {
+                                const selected = isSelected(id);
+                                return (
+                                    <g key={id}>
+                                        {selected && (
+                                            <rect 
+                                                x={x + HIL_PAD_X}
+                                                y={y + HIL_PAD_Y}
+                                                width={width - 2 * HIL_PAD_X}
+                                                height={height - 2.5 * HIL_PAD_Y}
+                                                rx={HIL_RADIUS}
+                                                ry={HIL_RADIUS}
+                                                className='staffcanvas__highlight'
+                                                strokeWidth='3'
+                                                pointerEvents='none'
+                                            />
+                                        )}
+                                        <rect
+                                            x={x}
+                                            y={y}
+                                            width={width}
+                                            height={height}
+                                            fill='transparent'
+                                            onDoubleClick={(e) =>  {e.preventDefault(); handleDbClick(id)}}
                                         />
-                                    )}
-                                    <rect
-                                        x={x}
-                                        y={y}
-                                        width={width}
-                                        height={height}
-                                        fill='transparent'
-                                        onDoubleClick={(e) =>  {e.preventDefault(); handleDbClick(id)}}
-                                    />
-                                </g>
-                            );
-                        })}        
-                    </svg>
+                                    </g>
+                                );
+                            })}        
+                        </svg>
+                    </div>
                 </div>
             </div>
         </div>
