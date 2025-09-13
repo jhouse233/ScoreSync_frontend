@@ -5,6 +5,7 @@ import './Toolbar.css';
 import ToolbarButton from './ToolbarButton';
 import PianoToggleButton from './ToolbarActionButtons/PianoToggleButton';
 import DropdownMenu from '../../DropdownMenu/DropdownMenu';
+import ZoomControls from './ZoomControls';
 
 // Note images
 import sixtyFourthNote from '../../../assets/sixty-fourth-note.svg';
@@ -79,13 +80,13 @@ import metronome from '../../../assets/metronome.svg';
 import barline from '../../../assets/barline.svg';
 import doubleBarline from '../../../assets/doublebarline.svg';
 
-import undo from '../../../assets/undo.svg';
-import redo from '../../../assets/redo.svg';
-import cut from '../../../assets/cut.svg';
-import copy from '../../../assets/copy.svg';
-import paste from '../../../assets/paste.svg';
-import zoomin from '../../../assets/zoomin.svg';
-import zoomout from '../../../assets/zoomout.svg';
+// import undo from '../../../assets/undo.svg';
+// import redo from '../../../assets/redo.svg';
+// import cut from '../../../assets/cut.svg';
+// import copy from '../../../assets/copy.svg';
+// import paste from '../../../assets/paste.svg';
+// import zoomin from '../../../assets/zoomin.svg';
+// import zoomout from '../../../assets/zoomout.svg';
 
 const tabsButtons = ['Note', 'Articulation', 'Expression', 'Measure', 'Text'];
 
@@ -385,6 +386,7 @@ export default function Toolbar({ isKeyBoardVisible, toggleKeyboard }){
                     ))}
                 </div>
                 <div className="toolbar__actions">
+                    <ZoomControls />
                     <PianoToggleButton 
                         isActive={isKeyBoardVisible}
                         onClick={toggleKeyboard}

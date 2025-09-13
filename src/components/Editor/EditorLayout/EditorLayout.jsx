@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 
 
 import Toolbar from '../Toolbar/Toolbar';
@@ -8,14 +8,14 @@ import EditorHeader from '../EditorHeader/EditorHeader';
 import EditorHotkeys from './EditorHotkeys';
 
 export default function EditorLayout({ isKeyBoardVisible, toggleKeyboard }){
-    const [zoom, setZoom] = useState(1)
+    // const [zoom, setZoom] = useState(1)
 
-    const clamp = (v, lo = 0.5, hi = 2) => Math.max(lo, Math.min(hi, v));
-    const onZoomIn = () => setZoom(z => clamp(z + 0.1));
-    const onZoomOut = () => setZoom(z => clamp(z - 0.1));
-    const onZoomReset = () => setZoom(1)
+    // const clamp = (v, lo = 0.5, hi = 2) => Math.max(lo, Math.min(hi, v));
+    // const onZoomIn = () => setZoom(z => clamp(z + 0.1));
+    // const onZoomOut = () => setZoom(z => clamp(z - 0.1));
+    // const onZoomReset = () => setZoom(1)
 
-    const KEYBOARD_HEIGHT = 280;
+    // const KEYBOARD_HEIGHT = 280;
 
     return(
         <div 
@@ -29,12 +29,12 @@ export default function EditorLayout({ isKeyBoardVisible, toggleKeyboard }){
             <Toolbar 
                 isKeyBoardVisible={isKeyBoardVisible}
                 toggleKeyboard={toggleKeyboard}
-                zoom={zoom}
-                onZoomIn={onZoomIn}
-                onZoomOut={onZoomOut}
-                onZoomReset={onZoomReset}
+                // zoom={zoom}
+                // onZoomIn={onZoomIn}
+                // onZoomOut={onZoomOut}
+                // onZoomReset={onZoomReset}
             />
-            <StaffCanvas zoom={zoom} />
+            <StaffCanvas />
             {isKeyBoardVisible && (
                 <div className="keyboard-overlay">
                     <div className="keyboard-scroll">

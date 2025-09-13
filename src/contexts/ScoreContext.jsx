@@ -3,6 +3,13 @@ import { nanoid } from 'nanoid';
 
 const ScoreContext = createContext();
 
+export const ZOOM_MIN = 0.5;
+export const ZOOM_MAX = 2.0;
+export const ZOOM_STEP = 0.1;
+export const ZOOM_DEFAULT = 1.0;
+
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
 // --- State and Actions
 const initialState = { 
     measures: [], 
@@ -11,6 +18,7 @@ const initialState = {
     defaultClef: 'treble',
     clefEvents: [],
     entry: { duration: 'q', accidental: null},
+    zoom: ZOOM_DEFAULT,
 };
 
 export const actions = {
@@ -24,6 +32,8 @@ export const actions = {
 
     SET_TIME_SIGNATURE: 'SET_TIME_SIGNATURE',
 }
+
+
 
 // Duration and measure capacity
 const UNIT = 64;
@@ -290,6 +300,14 @@ function reducer(state, action) {
             };
         }
 
+        case 'SET_ZOOM':
+            return { ...state, zoom: clamp(action.payload, ZOOM_MIN, ZOOM_MAX) };
+        case 'ZOOM_IN':
+            return { ...state, zoom: clamp(state.zoom + ZOOM_STEP, ZOOM_MIN, ZOOM_MAX) };
+        case 'ZOOM_OUT':
+            return { ...state, zoom: clamp(state.zoom - ZOOM_STEP, ZOOM_MIN, ZOOM_MAX) };
+        case 'ZOOM_RESET':
+            return { ...state, zoom: ZOOM_DEFAULT };
 
         default: {
             if (process.env.NODE_ENV !== 'production') {
@@ -420,6 +438,11 @@ export default function ScoreProvider({ initialMeasures = [], children }) {
                 payload: { atMeasureIndex: i, item: { pitch, duration: dur, accidental} },
             });
         };
+
+        const setZoom = (z) => dispatch({ type: 'SET_ZOOM', payload: z });
+        const zoomIn = () => dispatch({ type: 'ZOOM_IN' });
+        const zoomOut = () => dispatch({ type: 'ZOOM_OUT' });
+        const resetZoom = () => dispatch({ type: 'ZOOM_RESET' });
  
 
         return {
@@ -446,6 +469,8 @@ export default function ScoreProvider({ initialMeasures = [], children }) {
             getEffectiveClefAtMeasure,
 
             setTimeSignatureAtSelectedMeasure,
+
+            zoom: state.zoom, setZoom, zoomIn, zoomOut, resetZoom,
         };
     }, [state])
     
