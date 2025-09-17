@@ -12,6 +12,7 @@ const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
 // --- State and Actions
 const initialState = { 
+    scoreId: 'local-demo',
     measures: [], 
     selectedMeasureId: null,
     measuresPerRow: 3,
@@ -321,8 +322,8 @@ function reducer(state, action) {
 }
 
 // -- Provider
-export default function ScoreProvider({ initialMeasures = [], children }) {
-    const [state, dispatch] = useReducer(reducer, initialState);
+export default function ScoreProvider({ initialMeasures = [], scoreId = 'local-demo', children }) {
+    const [state, dispatch] = useReducer(reducer, { ...initialState, scoreId } );
 
     useEffect(() => {
         if (state.measures.length === 0 && initialMeasures.length > 0) {
@@ -344,6 +345,21 @@ export default function ScoreProvider({ initialMeasures = [], children }) {
         const removeMeasure = (id) => dispatch({ type: 'REMOVE', payload: id });
 
         const idToIndex = new Map(state.measures.map((m, i) => [m.id, i]));
+        const selectedMeasureIndex = typeof state.selectedMeasureId === 'string'
+            ? (idToIndex.get(state.selectedMeasureId) ?? -1)
+            : -1;
+        const selectedMeasure = selectedMeasureIndex >= 0
+            ? state.measures[selectedMeasureIndex]
+            : null;
+
+        const getCurrentAnchor = () => {
+            if (!state.selectedMeasureId) return null;
+            return {
+                scoreId: state.scoreId,
+                measureId: state.selectedMeasureId,
+                beat: null, 
+            };
+        };
 
         const setMeasuresPerRow = (n) =>
             dispatch({ type: actions.SET_MEASURES_PER_ROW, payload: n });
@@ -446,12 +462,16 @@ export default function ScoreProvider({ initialMeasures = [], children }) {
  
 
         return {
+            scoreId: state.scoreId,
             measures: state.measures,
             selectedMeasureId: state.selectedMeasureId,
+            selectedMeasureIndex,
+            selectedMeasure,
             measuresPerRow: state.measuresPerRow,
             defaultClef: state.defaultClef,
             clefEvents: state.clefEvents,
             entry: state.entry,
+            getCurrentAnchor,
 
             selectMeasure, clearSelection, addMeasure,
             insertBefore, removeMeasure,
