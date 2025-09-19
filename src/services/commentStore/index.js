@@ -1,1 +1,1 @@
-export { default } from './memory';
+export { default } from './firestore';
