@@ -87,6 +87,7 @@ import doubleBarline from '../../../assets/doublebarline.svg';
 // import paste from '../../../assets/paste.svg';
 // import zoomin from '../../../assets/zoomin.svg';
 // import zoomout from '../../../assets/zoomout.svg';
+import notesIcon from '../../../assets/notes.svg';
 
 const tabsButtons = ['Note', 'Articulation', 'Expression', 'Measure', 'Text'];
 
@@ -281,7 +282,7 @@ function TimeSignatureDropdown({ icon, alt, disabled, onSelect }) {
 
 
 
-export default function Toolbar({ isKeyBoardVisible, toggleKeyboard }){
+export default function Toolbar({ isKeyBoardVisible, toggleKeyboard, onToggleComments, isCommentsOpen }){
     const [activeTab, setActiveTab] = useState('Note')
 
     const [selectedDuration, setSelectedDuration] = useState(null);
@@ -387,6 +388,14 @@ export default function Toolbar({ isKeyBoardVisible, toggleKeyboard }){
                 </div>
                 <div className="toolbar__actions">
                     <ZoomControls />
+                    <button 
+                        className="toolbar__button toolbar__button-notes"
+                        onClick={onToggleComments}
+                        title='Open notes'
+                        aria-label='Open notes'
+                    >
+                        <img src={notesIcon} alt="" aria-hidden='true' />
+                    </button>
                     <PianoToggleButton 
                         isActive={isKeyBoardVisible}
                         onClick={toggleKeyboard}
