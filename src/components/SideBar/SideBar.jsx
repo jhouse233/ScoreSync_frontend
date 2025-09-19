@@ -17,7 +17,7 @@ export default function Sidebar({ isOpen, onClose, title = 'Panel', children }) 
             document.body.style.overflow = 'hidden'
         } else {
             document.body.style.overflow = '';
-            preventActiveRef.current?.focus?.();
+            prevActiveRef.current?.focus?.();
         }
         return () => { document.body.style.overflow = ''; };
     }, [isOpen]);

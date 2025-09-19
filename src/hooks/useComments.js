@@ -14,7 +14,7 @@ export default function useComments(scoreId) {
     const deleteComment = useCallback((id) => store.softDelete(id), []);
 
     const countByMeasure = useMemo(() => {
-        const map = newMap();
+        const map = new Map();
         for (const c of comments) {
             const m = c.anchor.measureId;
             map.set(m, (map.get(m) || 0) + 1);

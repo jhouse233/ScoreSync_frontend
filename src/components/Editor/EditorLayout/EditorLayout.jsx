@@ -6,34 +6,28 @@ import StaffCanvas from '../StaffCanvas/StaffCanvas';
 import PianoInput from '../PianoInput/PianoInput';
 import EditorHeader from '../EditorHeader/EditorHeader';
 import EditorHotkeys from './EditorHotkeys';
+import CommentSidebar from '../Comments/CommentsSidebar';
 
 export default function EditorLayout({ isKeyBoardVisible, toggleKeyboard }){
-    // const [zoom, setZoom] = useState(1)
-
-    // const clamp = (v, lo = 0.5, hi = 2) => Math.max(lo, Math.min(hi, v));
-    // const onZoomIn = () => setZoom(z => clamp(z + 0.1));
-    // const onZoomOut = () => setZoom(z => clamp(z - 0.1));
-    // const onZoomReset = () => setZoom(1)
-
-    // const KEYBOARD_HEIGHT = 280;
+    const [isCommentsOpen, setIsCommentsOpen] = useState(false);
+    const openComments = () => setIsCommentsOpen(true);
+    const closeComments = () => setIsCommentsOpen(false)
 
     return(
         <div 
             className='editor'
 
-            // className={`editor ${isKeyboardVisible ? 'editor--kb' : ''}`}
-            // style={{ '--kb-height': `${KEYBOARD_HEIGHT}px` }}
+
         >
             <EditorHotkeys />
             <EditorHeader />
             <Toolbar 
                 isKeyBoardVisible={isKeyBoardVisible}
                 toggleKeyboard={toggleKeyboard}
-                // zoom={zoom}
-                // onZoomIn={onZoomIn}
-                // onZoomOut={onZoomOut}
-                // onZoomReset={onZoomReset}
+                onToggleComments={openComments}
+
             />
+            <CommentSidebar isOpen={isCommentsOpen} onClose={closeComments} />
             <StaffCanvas />
             {isKeyBoardVisible && (
                 <div className="keyboard-overlay">
@@ -41,11 +35,7 @@ export default function EditorLayout({ isKeyBoardVisible, toggleKeyboard }){
                         <PianoInput onClose={toggleKeyboard} />
                     </div>
                 </div>
-                // <div className="keyboard-overlay">
-                //     <div className="keyboard-scroll">
-                //         <PianoInput onClose={toggleKeyboard} />
-                //     </div>
-                // </div>
+
             )}
         </div> 
     )

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useScore } from '../../../contexts/ScoreContext';
 import useComments from '../../../hooks/useComments';
 import Sidebar from '../../Sidebar/Sidebar';
-import './CommentsSidebar.css';
+import './CommentSidebar.css';
 
 export default function CommentSidebar( { isOpen, onClose }) {
     const { scoreId, getCurrentAnchor } = useScore();
@@ -28,9 +28,27 @@ export default function CommentSidebar( { isOpen, onClose }) {
             <ul className="csb__list">
                 {list.map(c => (
                     <li className="csb__item" key={c.id}>
-                        <div className="csb__meta"></div>
+                        <div className="csb__meta">
+                            {c.anchor.measureId} {c.authorName} {new Date(c.createdAt).toLocaleString()}
+                        </div>
+                        <div className="csb__text">{c.text}</div>
+                        <div className="csb__actions">
+                            <button
+                                type='button'
+                                onClick={() => {
+                                    const next = prompt('Edit comment', c.text)
+                                    if (next != null) updateComent(c.id, { text: next.trim() });
+                                }}
+                            >
+                                Edit
+                            </button>
+                            <button type='button' onClick={() => deleteComment(c.id)}>Delete</button>
+                        </div>
                     </li>
                 ))}
+                {list.length === 0 && (
+                    <li className="csb__empty">No notes yet. Select a measure and add one</li>
+                )}
             </ul>
         </Sidebar>
     )
