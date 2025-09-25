@@ -1,0 +1,29 @@
+.comment-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 6px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(196,156,72,0.95);
+    color: #0b0f17;
+    font-size: 12px;
+    line-height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 3;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+}
+
+.comment-badge:hover { 
+    transform: translateY(-1px); 
+}
+
+.comment-badge:focus-visible { 
+    outline: 2px solid #fff; 
+    outline-offset: 2px; 
+}

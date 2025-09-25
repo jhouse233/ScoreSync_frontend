@@ -2,11 +2,13 @@ import { useEffect, useRef, useState, useMemo } from 'react';
 import { layout as computePageLayout, DEFAULT_LAYOUT } from '../../../utils/pageLayout';
 import { Renderer, Stave, StaveNote, Voice, Formatter, ClefNote, Accidental, Beam, Fraction } from 'vexflow';
 import { useScore } from '../../../contexts/ScoreContext';
+import CommentBadge from '../Comments/CommentBadge';
+import useComments from '../../../hooks/useComments';
 
 
 import './StaffCanvas.css'
 
-export default function StaffCanvas() {
+export default function StaffCanvas({ onOpenComments }) {
 
     const PAGE_GAP = 24;
     const LAYOUT = { ...DEFAULT_LAYOUT, maxMeasuresPerSystem: 4};
@@ -16,6 +18,7 @@ export default function StaffCanvas() {
     const HIL_RADIUS = 6;
    
     const {
+        scoreId,
         measures,
         selectedMeasureId,
         selectMeasure,
@@ -25,6 +28,8 @@ export default function StaffCanvas() {
         getSystemStartClef,
         getEffectiveClefAtMeasure,
     } = useScore();
+
+    const { countByMeasure } = useComments(scoreId);
     
 
     const isSelected = (id) => selectedMeasureId === id;
@@ -286,8 +291,6 @@ export default function StaffCanvas() {
 
                 <div className="page__stack-outer" style={{ width: DEFAULT_LAYOUT.pageWidth }}>
                     <div className="page__stack-inner">
-
-                    
                         <div ref={hostRef} className='staffcanvas__vf'/>
                         <svg 
                             className="staffcanvas__overlay"
@@ -332,6 +335,29 @@ export default function StaffCanvas() {
                                 );
                             })}        
                         </svg>
+                        <div 
+                            className="staffcanvas__badgeOverlay"
+                            style={{ width: svgWidth, height: svgHeight}}
+                        >
+                            {frames.map(({ id, x, y, width }) => {
+                                const count = countByMeasure.get(id) || 0;
+                                if (!count) return null;
+                                const top = y + 6;
+                                const left = x + width - 24;
+                                return (
+                                    <CommentBadge 
+                                        key={`badge-${id}`}
+                                        count={count}
+                                        style={{ position: 'absolute', top, left }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            selectMeasure(id);
+                                            onOpenComments?.();
+                                        }}
+                                    />
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
             </div>

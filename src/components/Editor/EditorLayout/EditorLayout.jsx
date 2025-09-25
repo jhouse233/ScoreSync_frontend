@@ -28,7 +28,7 @@ export default function EditorLayout({ isKeyBoardVisible, toggleKeyboard }){
 
             />
             <CommentSidebar isOpen={isCommentsOpen} onClose={closeComments} />
-            <StaffCanvas />
+            <StaffCanvas onOpenComments={openComments}/>
             {isKeyBoardVisible && (
                 <div className="keyboard-overlay">
                     <div className="keyboard-scroll">
