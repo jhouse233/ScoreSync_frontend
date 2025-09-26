@@ -33,7 +33,7 @@ function subscribeToMeasure(scoreId, measureId, cb) {
     return unsub;
 }
 
-async function create ({ text, anchor, authorId, authorName }) {
+async function create({ text, anchor, authorId, authorName }) {
     const docRef = await addDoc(col(anchor.scoreId), {
         anchor,
         scoreId: anchor.scoreId,
@@ -41,6 +41,7 @@ async function create ({ text, anchor, authorId, authorName }) {
         text,
         authorId: authorId || null,
         createdAt: serverTimestamp(),
+        clientCreatedAt: Date.now(),
         updatedAt: null,
         resolved: false,
         deletedAt: null,

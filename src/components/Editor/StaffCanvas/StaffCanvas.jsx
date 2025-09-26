@@ -252,12 +252,7 @@ export default function StaffCanvas({ onOpenComments }) {
                 const voice = new Voice({ num_beats, beat_value })
                     .setMode(Voice.Mode.SOFT)
                     .addTickables(tickables);
-
-                // const beams = Beam.generateBeams(beamables, {
-                //     groups: beamGroupsForTS(thisTS),
-                //     beam_rests: false,
-                //     maintain_stem_diretions: false,
-                // });
+                    
                 const beams = Beam.generateBeams(beamables, {
                     groups: beamGroupsForTS(thisTS),
                     beam_rests: false,

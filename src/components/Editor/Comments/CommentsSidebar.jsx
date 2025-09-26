@@ -4,6 +4,8 @@ import useComments from '../../../hooks/useComments';
 import Sidebar from '../../Sidebar/Sidebar';
 import './CommentSidebar.css';
 
+import { bestEffortDate, formatDateSafe, isEdited } from '../../../utils/dateSafe';
+
 export default function CommentSidebar( { isOpen, onClose }) {
     const { scoreId, getCurrentAnchor } = useScore();
     const { comments, createComment, updateComment, deleteComment } = useComments(scoreId);
@@ -30,6 +32,12 @@ export default function CommentSidebar( { isOpen, onClose }) {
                     <li className="csb__item" key={c.id}>
                         <div className="csb__meta">
                             {c.anchor.measureId} {c.authorName} {new Date(c.createdAt).toLocaleString()}
+                        </div>
+                        <div className="csb__meta">
+                            {c.anchor.measureId} {c.authorName} {
+                                formatDateSafe(bestEffertDate(c.createdAt, c.clientCreateAt))
+                            }
+                            {isEdited(c.createdAt, c.updatedAt) && <span className='csb__edited'>Edited</span>}
                         </div>
                         <div className="csb__text">{c.text}</div>
                         <div className="csb__actions">
