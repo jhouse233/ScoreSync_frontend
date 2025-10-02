@@ -44,7 +44,8 @@ export default function LoginForm({ onSubmit, navigateToRegister, isLoadingText 
                 <label htmlFor="password" className="login-form__label">
                     Password
                     <input 
-                        type="password" 
+                        type="password"
+                        name='password'
                         className="login-form__input" 
                         placeholder='Password'
                         required
