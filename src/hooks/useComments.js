@@ -10,7 +10,7 @@ export default function useComments(scoreId) {
     }, [scoreId]);
 
     const createComment = useCallback((input) => store.create(input), [])
-    // const updateComment = useCallback((id, patch) => store.update(id, patch), []);
+  
     const updateComment = useCallback((id, patch) => store.update(scoreId, id, patch), [scoreId]);
     const deleteComment = useCallback((id) => store.softDelete(scoreId, id), [scoreId]);
 
