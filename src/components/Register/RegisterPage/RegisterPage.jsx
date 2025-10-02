@@ -11,9 +11,9 @@ export default function RegisterPage() {
         <div className="register-page">
             <img src={LoginImage} alt="Register Image" className="register-page__image" />
             <div className="register-page__overlay">
-                <form className="register__form-card">
+                <div className="register__form-card">
                     <RegisterForm />
-                </form>
+                </div>
             </div>
         </div>
     )
