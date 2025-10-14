@@ -26,5 +26,5 @@ https://scoresync-app.netlify.app
 
 ### Author
 - Jeremy House
-- Builts as part of TripleTen's Software Engineering Program - blending a background in music
+- Built as part of TripleTen's Software Engineering Program - blending a background in music
 composition with full-stack web development
