@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import Whitekey from './Whitekey/Whitekey';
-import Blackkey from './BlackKey/Blackkey';
+import Blackkey from './Blackkey/Blackkey';
 import './Keyboard.css';
 
 const keys = [
