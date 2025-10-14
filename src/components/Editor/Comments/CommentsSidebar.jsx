@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useScore } from '../../../contexts/ScoreContext';
 import useComments from '../../../hooks/useComments';
-import Sidebar from '../../Sidebar/Sidebar';
+import Sidebar from '../../Sidebar/Sidebar.jsx'
 import './CommentSidebar.css';
 
 import { bestEffortDate, formatDateSafe, isEdited } from '../../../utils/dateSafe';
