@@ -1,5 +1,6 @@
 import './Header.css';
 import logo from '../../assets/logo.svg'
+import mobileHamburger from '../../assets/mobilehamburger.svg'
 
 
 export default function Header() {
@@ -24,6 +25,12 @@ export default function Header() {
                     className="header__signup-button">
                         Get Started
                 </button>
+            </div>
+            <div className="header__hamburger">
+                <img src={mobileHamburger} 
+                    alt="Menu"
+                    className='header__hamburger-icon' 
+                />
             </div>
         </header>
     )

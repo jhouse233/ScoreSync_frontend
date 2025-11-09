@@ -66,3 +66,25 @@
     transition: background-color 0.3s ease;
     text-decoration: underline;
 }
+
+@media (max-width: 767px) {
+    .header {
+        padding: 16px 20px;
+    }
+    .header__access-container {
+        display: none;
+    }
+
+    .header__hamburger {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .header__hamburger-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+}
