@@ -71,6 +71,14 @@
     display: none;
 }
 
+.header__menu-button {
+    display: none;
+}
+
+.mobile-menu__item {
+    display: none;
+}
+
 @media (max-width: 400px) {
     .header {
         padding: 16px 20px;
@@ -79,16 +87,24 @@
         display: none;
     }
 
-    .header__hamburger {
+    /* .header__hamburger {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    } */
+    .header__menu-button {
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
     }
-
+    
     .header__hamburger-icon {
         width: 28px;
         height: 28px;
     }
+
+ 
 
 }

@@ -7,7 +7,7 @@ import mobileHamburger from '../../assets/mobilehamburger.svg'
 export default function Header() {
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const remuRef = useRef(null);
+    const menuRef = useRef(null);
     const buttonRef = useRef(null);
 
     // Close on Escape
@@ -72,6 +72,17 @@ export default function Header() {
             >
                 <img src={mobileHamburger} alt="" className='header__hamburger-icon' />
             </button>
+            {/* Mobile Menu Dropdown */}
+            <nav 
+                id='mobile-menu'
+                ref={menuRef}
+                className={`mobile-menu ${isMenuOpen ? 'mobile-menu--open' : ''}`}
+                role='menu'
+            >
+                <button className="mobile-menu__item" role='menuitem'>Features</button>
+                <button className="mobile-menu__item" role='menuitem'>Login</button>
+                <button className="mobile-menu__item mobile-menu__item--primary" role='menuitem'>Get Started</button>
+            </nav>
             {/* <div className="header__hamburger">
                 <img src={mobileHamburger} 
                     alt="Menu"
