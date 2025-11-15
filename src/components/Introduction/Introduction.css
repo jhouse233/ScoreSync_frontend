@@ -53,11 +53,34 @@
 }
 
 @media (max-width: 400px) {
-    .intro__tagline {
-        font-size: 32px;
+    .introduction {
+        justify-content: flex-start;
+        padding-top: 72px;
+
+        background-image: url('../../assets/mainmobilebackground.svg');
+        /* background-position: 50% 20%; */
+        background-size: cover;
+        /* display: flex; */
+        /* background-size: 120%; */
     }
 
-    .intro__taglinbe-highlight {
+    .introduction__overlay {
+        /* margin-bottom: 500px; */
+    }
+
+    .intro__tagline {
+        font-size: 32px;
+        line-height: 1.1;
+    }
+
+    .intro__tagline-highlight {
         font-size: 38px;
+    }
+
+    .introduction__features {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-top: 50px;
     }
 }
