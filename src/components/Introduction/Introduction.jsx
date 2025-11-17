@@ -4,6 +4,7 @@ import realtime from '../../assets/real-time.svg';
 import accessAnyWhere from '../../assets/accessanywhere.svg';
 import versionControl from '../../assets/versioncontrol.svg';
 
+
 export default function Introduction(){
     return (
         <section className="introduction">
