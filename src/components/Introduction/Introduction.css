@@ -59,6 +59,8 @@
 
         background-image: url('../../assets/mainmobilebackground.svg');
         background-size: cover;
+
+        display: block;
         /* display: flex; */
         /* background-size: 120%; */
     }
