@@ -74,3 +74,35 @@
   .features__tagline-refine {
     color: #EDCD96;
   }
+
+  @media (max-width: 400px) {
+    .features {
+      padding: 0;
+    }
+
+    .features__heading-title .features__tagline-review::after {
+      content: "";
+      display: block;
+    }
+
+    .features__heading-paragraph {
+      margin-top: 32px;
+    }
+
+    .features__tabs-panel {
+      flex-direction: column;
+      align-items: center;
+      margin-top: 0;
+      display: block;
+    }
+
+    .features__panel {
+      margin-bottom: 100px;
+    }
+
+    .features__title {
+      font-size: 1rem;
+      margin: 0;
+    }
+
+  }
