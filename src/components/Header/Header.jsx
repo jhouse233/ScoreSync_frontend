@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import './Header.css';
 import logo from '../../assets/logo.svg'
 import mobileHamburger from '../../assets/mobilehamburger.svg'
+import closeBlack from '../../assets/closeBlack.svg';
 
 
 export default function Header() {
@@ -63,14 +64,14 @@ export default function Header() {
             <button 
                 className="header__menu-button"
                 ref={buttonRef}
-                aria-label='Open menu'
+                aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
                 aria-haspopup='menu'
                 aria-controls='mobile-menu'
                 aria-expanded={isMenuOpen}
                 onClick={() => setIsMenuOpen((v) => !v)}
                 type='button'
             >
-                <img src={mobileHamburger} alt="" className='header__hamburger-icon' />
+                <img src={isMenuOpen ? closeBlack : mobileHamburger} alt="" className='header__hamburger-icon' />
             </button>
             {/* Mobile Menu Dropdown */}
             <nav 
