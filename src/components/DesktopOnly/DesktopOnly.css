@@ -1,38 +1,58 @@
 .desktop-only {
     width: 100%;
-    min-height: 100vh;
+    min-height: 75vh;
     background: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 32px;
+    /* padding: 32px; */
 }
 
 .desktop-only__contaienr {
     width: 100%;
-    max-width: 420px;
-    text-align: left;
+    /* max-width: 420px; */
+    max-width: 100%;
+    /* text-align: left; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .desktop-only__logo {
     width: 160px;
-    margin-bottom: 40px;
+    margin: 0 auto;
     color: black;
+    /* padding: 101px; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.desktop-only__text {
+    padding: 20px;
+    margin-top: 96px;
+    /* flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center; */
 }
 
 .desktop-only__small {
     font-family: 'Quicksand', sans-serif;
     font-size: 1rem;
     color: #111;
-    margin-bottom: 12px;
+    margin: 0;
+    /* margin-bottom: 12px; */
 }
 
 .desktop-only__headline {
     font-family: 'Quicksand', sans-serif;
-    font-size: 2.1rem;
+    font-size: 2.0rem;
     font-weight: 600;
     line-height: 1.3;
-    margin-bottom: 24px;
+    margin: 0;
+    /* margin-bottom: 24px; */
+    color: black;
 }
 
 .desktop-only__body {
@@ -40,5 +60,7 @@
     font-size: 1.1rem;
     line-height: 1.5;
     color: #222;
+    margin: 0;
 }
+
 
