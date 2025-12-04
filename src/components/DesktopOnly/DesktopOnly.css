@@ -31,10 +31,6 @@
 .desktop-only__text {
     padding: 20px;
     margin-top: 96px;
-    /* flex-direction: column;
-    display: flex;
-    justify-content: center;
-    align-items: center; */
 }
 
 .desktop-only__small {

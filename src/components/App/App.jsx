@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Routes, Route } from 'react-router-dom';
 import ScoreProvider  from '../../contexts/ScoreContext.jsx';
 import './App.css'
 
@@ -6,11 +7,6 @@ import Header from '../Header/Header.jsx';
 import Features from '../Features/Features.jsx';
 import Introduction from '../Introduction/Introduction.jsx';
 
-// import EditorHeader from '../Editor/EditorHeader/EditorHeader.jsx';
-// import Toolbar from '../Editor/Toolbar/Toolbar.jsx';
-// import StaffCanvas from '../Editor/StaffCanvas/StaffCanvas.jsx';
-// import Keyboard from '../Editor/Keyboard/Keyboard.jsx';
-// import PianoInput from '../Editor/PianoInput/PianoInput.jsx';
 import LoginPage from '../Login/LoginPage/LoginPage.jsx';
 import RegisterPage from '../Register/RegisterPage/RegisterPage.jsx';
 import DashboardPage from '../Editor/Dashboard/DashboardPage/DashboardPage.jsx';
@@ -33,18 +29,39 @@ function App() {
     <div className="page">
       <div className="page__content">
         <Header/>
-        <Introduction/>
-        <Features/>
-        <DesktopOnly />
-        <LoginPage />
-        <RegisterPage />
-        <DashboardPage />
-        <ScoreProvider>
-          <EditorLayout 
-            isKeyBoardVisible={isKeyBoardVisible}
-            toggleKeyboard={toggleKeyboard}
+        <Routes>
+          <Route
+            path='/'
+            element={
+              <>
+                <Introduction/>
+                <Features/>
+              </>
+            }
           />
-        </ScoreProvider>
+          {/* Auth Pages */}
+          <Route path='/login' element={<LoginPage />} />
+          <Route path='/register' element={<RegisterPage />} />
+
+          {/* Dashboard */}
+          <Route path='/dashboard' element={<DashboardPage />} />
+
+          {/* Desktop-only message page */}
+          <Route path='/desktop-only' element={<DashboardPage />} />
+          
+          {/* Editor */}
+          <Route
+            path='/editor'
+            element={
+              <ScoreProvider>
+                <EditorLayout 
+                  isKeyBoardVisible={isKeyBoardVisible}
+                  toggleKeyboard={toggleKeyboard}
+                />
+              </ScoreProvider>
+            }
+          />
+        </Routes>
       </div>
     </div>
   )
