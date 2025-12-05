@@ -11,6 +11,7 @@ import LoginPage from '../Login/LoginPage/LoginPage.jsx';
 import RegisterPage from '../Register/RegisterPage/RegisterPage.jsx';
 import DashboardPage from '../Editor/Dashboard/DashboardPage/DashboardPage.jsx';
 import EditorLayout from '../Editor/EditorLayout/EditorLayout.jsx';
+import EditorPage from '../Editor/EditorLayout/EditorPage.jsx';
 
 import DesktopOnly from '../DesktopOnly/DesktopOnly.jsx';
 
@@ -53,12 +54,10 @@ function App() {
           <Route
             path='/editor'
             element={
-              <ScoreProvider>
-                <EditorLayout 
+                <EditorPage
                   isKeyBoardVisible={isKeyBoardVisible}
                   toggleKeyboard={toggleKeyboard}
                 />
-              </ScoreProvider>
             }
           />
         </Routes>
