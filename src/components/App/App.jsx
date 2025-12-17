@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Routes, Route } from 'react-router-dom';
+
 import ScoreProvider  from '../../contexts/ScoreContext.jsx';
 import './App.css'
 
@@ -25,6 +26,7 @@ function App() {
   const toggleKeyboard = () => {
     setIsKeyBoardVisible(prev => !prev);
   }
+
 
   return (
     <div className="page">

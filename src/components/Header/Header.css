@@ -48,6 +48,10 @@
     gap: 8px;
 }
 
+.header__logo-container:hover {
+    cursor: pointer;
+}
+
 .header__logo {
     /* margin-left: 40px; */
 }

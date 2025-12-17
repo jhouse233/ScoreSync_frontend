@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'; 
+import { useNavigate } from 'react-router-dom';
 import './Header.css';
 import logo from '../../assets/logo.svg'
 import mobileHamburger from '../../assets/mobilehamburger.svg'
@@ -10,6 +11,8 @@ export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef(null);
     const buttonRef = useRef(null);
+
+    const navigate = useNavigate();
 
     // Close on Escape
     useEffect(() => {
@@ -40,22 +43,31 @@ export default function Header() {
 
     return (
         <header className="header">
-            <div className="header__logo-container">
+            <div 
+                className="header__logo-container"
+                role='button'
+                tabIndex={0}
+                onClick={() => navigate('/')}
+                onKeyDown={(e) => e.key === 'Enter' && navigate('/')}
+            >
                 <img src={logo} alt="ScoreSync Logo" className="header__logo" />
             </div>
             <div className="header__access-container">
                 <button 
                     type='button'
+                    onClick={() => navigate('/features')}
                     className="header__features">
                         Features
                 </button>
                 <button 
                     type='button'
+                    onClick={() => navigate('/login')}
                     className="header__login-button">
                         Login
                 </button>
                 <button 
                     type='button' 
+                    onClick={() => navigate('/register')}
                     className="header__signup-button">
                         Get Started
                 </button>
