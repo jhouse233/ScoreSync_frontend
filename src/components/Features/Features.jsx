@@ -47,7 +47,7 @@ export default function Features(){
         }
     }
     return(
-        <section className="features">
+        <section className="features" id='features'>
             <div className="features__heading">
                 <h3 className="features__heading-title">Write.<span className='features__tagline-review'>Review.</span><span className='features__tagline-refine'>Refine.</span>Together.</h3>
                 <p className="features__heading-paragraph">

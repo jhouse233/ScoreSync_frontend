@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'; 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './Header.css';
 import logo from '../../assets/logo.svg'
 import mobileHamburger from '../../assets/mobilehamburger.svg'
@@ -13,6 +13,18 @@ export default function Header() {
     const buttonRef = useRef(null);
 
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const handleFeaturesClick = () => {
+        if (location.pathname === '/') {
+            const el = document.getElementById('features');
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth'})
+            } else {
+                navigate('/');
+            }
+        }
+    }
 
     // Close on Escape
     useEffect(() => {
@@ -55,7 +67,7 @@ export default function Header() {
             <div className="header__access-container">
                 <button 
                     type='button'
-                    onClick={() => navigate('/features')}
+                    onClick={handleFeaturesClick}
                     className="header__features">
                         Features
                 </button>
