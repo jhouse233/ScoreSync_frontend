@@ -36,7 +36,7 @@ export default function CommentSidebar( { isOpen, onClose }) {
                         </div>
                         <div className="csb__meta">
                             {c.anchor.measureId} {c.authorName} {
-                                formatDateSafe(bestEffertDate(c.createdAt, c.clientCreateAt))
+                                formatDateSafe(bestEffortDate(c.createdAt, c.clientCreateAt))
                             }
                             {isEdited(c.createdAt, c.updatedAt) && <span className='csb__edited'>Edited</span>}
                         </div>
@@ -46,7 +46,7 @@ export default function CommentSidebar( { isOpen, onClose }) {
                                 type='button'
                                 onClick={() => {
                                     const next = prompt('Edit comment', c.text)
-                                    if (next != null) updateComent(c.id, { text: next.trim() });
+                                    if (next != null) updateComment(c.id, { text: next.trim() });
                                 }}
                             >
                                 Edit

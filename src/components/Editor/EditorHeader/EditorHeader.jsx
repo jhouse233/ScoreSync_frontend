@@ -15,12 +15,12 @@ import user from '../../../assets/user.svg';
 
 export default function EditorHeader(){
 
-    const [isActive, setIsActive] = useState(false);
+    const [_isActive, setIsActive] = useState(false);
     
-    const handleOpen = () => setIsActive(true);
+    const _handleOpen = () => setIsActive(true);
     const handleClose = () => setIsActive(false);
 
-    const handleSubmit = e => {
+    const _handleSubmit = e => {
         e.preventDefault();
         onSubmit(e);
         handleClose();
