@@ -9,7 +9,10 @@ export default function useComments(scoreId) {
         return store.subscribeToScore(scoreId, setComments);
     }, [scoreId]);
 
-    const createComment = useCallback((input) => store.create(input), [])
+    const createComment = useCallback(
+        (input) => store.create(scoreId, input), 
+        [scoreId]
+    );
   
     const updateComment = useCallback((id, patch) => store.update(scoreId, id, patch), [scoreId]);
     const deleteComment = useCallback((id) => store.softDelete(scoreId, id), [scoreId]);
@@ -18,7 +21,8 @@ export default function useComments(scoreId) {
     const countByMeasure = useMemo(() => {
         const map = new Map();
         for (const c of comments) {
-            const m = c.anchor.measureId;
+            const m = c?.anchor?.measureId;
+            if (!m) continue;
             map.set(m, (map.get(m) || 0) + 1);
         }
         return map;
