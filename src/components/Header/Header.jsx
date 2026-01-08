@@ -15,15 +15,29 @@ export default function Header() {
     const navigate = useNavigate();
     const location = useLocation();
 
+    // const handleFeaturesClick = () => {
+    //     if (location.pathname === '/') {
+    //         const el = document.getElementById('features');
+    //         if (el) {
+    //             el.scrollIntoView({ behavior: 'smooth'})
+    //         } else {
+    //             navigate('/');
+    //         }
+    //     }
+    // }
     const handleFeaturesClick = () => {
-        if (location.pathname === '/') {
+        const scrollToFeatures = () => {
             const el = document.getElementById('features');
-            if (el) {
-                el.scrollIntoView({ behavior: 'smooth'})
-            } else {
-                navigate('/');
-            }
+            if (el) el.scrollIntoView({ behavior: 'smooth'});
+        };
+
+        if (location.pathname !== '/') {
+            navigate('/', { state: { scrollTo: 'features' } });
+        } else {
+            scrollToFeatures();
         }
+
+        setIsMenuOpen(false);
     }
 
     // Close on Escape
@@ -50,6 +64,15 @@ export default function Header() {
         document.addEventListener('mousedown', onClickAway);
         return () => document.removeEventListener('mousedown', onClickAway);
     }, [isMenuOpen]);
+
+    useEffect(() => {
+        if (location.pathname === '/' && location.state?.scrollTo === 'features') {
+            setTimeout(() => {
+                document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+                navigate('.', { replace: true, state: {} });
+            }, 0);
+        }
+    }, [location.pathname, location.state, navigate]);
 
 
 
