@@ -9,11 +9,16 @@ import closeBlack from '../../assets/closeBlack.svg';
 export default function Header() {
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isOverLightSection, setIsOverLightSection] = useState(false);
+    const [forceDarkUntilIntersect, setForceDarkUntilIntersect] = useState(false);
+
     const menuRef = useRef(null);
     const buttonRef = useRef(null);
 
     const navigate = useNavigate();
     const location = useLocation();
+
+    const shouldForceDark = location.pathname === '/' && location.state?.scrollTo === 'features';
 
     // const handleFeaturesClick = () => {
     //     if (location.pathname === '/') {
@@ -67,6 +72,8 @@ export default function Header() {
 
     useEffect(() => {
         if (location.pathname === '/' && location.state?.scrollTo === 'features') {
+            setForceDarkUntilIntersect(true);
+
             setTimeout(() => {
                 document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
                 navigate('.', { replace: true, state: {} });
@@ -74,10 +81,34 @@ export default function Header() {
         }
     }, [location.pathname, location.state, navigate]);
 
+    useEffect(() => {
+        const featuresEl = document.getElementById('features');
+        if (!featuresEl) return;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                const isActive = entry.isIntersecting && entry.intersectionRatio >= 0.2;
+                setIsOverLightSection(isActive);
+
+                if (!isActive) setForceDarkUntilIntersect(false);
+            },
+            {
+                root: null,
+                threshold: [0, 0.2],
+                rootMargin: '-80px 0px 0px 0px',
+            }
+        );
+
+        observer.observe(featuresEl);
+
+        return () => observer.disconnect();
+
+    }, [location.pathname]);
+
 
 
     return (
-        <header className="header">
+        <header className={`header ${(isOverLightSection || forceDarkUntilIntersect) ? 'header--dark' : ''}`}>
             <div 
                 className="header__logo-container"
                 role='button'

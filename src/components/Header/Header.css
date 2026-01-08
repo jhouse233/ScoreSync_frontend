@@ -42,6 +42,19 @@
     justify-content: space-between;
 }
 
+.header .header__features,
+.header .header__login-button,
+.header .header__signup-button {
+    color: #fff;
+}
+
+.header.header--dark .header__features,
+.header.header--dark .header__login-button,
+.header.header--dark .header__signup-button {
+    color: black;
+}
+
+
 .header__logo-container {
     display: flex;
     align-items: center;
