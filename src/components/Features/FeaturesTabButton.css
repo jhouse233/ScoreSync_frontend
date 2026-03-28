@@ -1,0 +1,9 @@
+.feature-tab-button {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    max-width: 180px;
+  }
+  
+  .feature-tab-button:hover {
+    transform: scale(1.05);
+  }

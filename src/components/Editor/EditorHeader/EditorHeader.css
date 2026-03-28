@@ -1,0 +1,76 @@
+.editor-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 100%;
+    background-color: #101926;
+    padding: 24px 40px;
+    /* gap: 16px; */
+    /* overflow: hidden; */
+    box-sizing: border-box;
+}
+.editor-header__project-tools {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+
+    min-width: 0;
+    flex-shrink: 1;
+}
+.editor-header__title {
+    display: flex;
+    align-items: center;
+}
+
+.editor-header__volume-button {
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.editor-header__edit-button {
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.editor-header__user-tools {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-shrink: 0;
+    /* margin-right: 80px; */
+}
+
+.editor-header__save-history-button {
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.editor-header__share-button {
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+.editor-header__user-button {
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* User Icon */
+
+.user__button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.editor-header__user {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

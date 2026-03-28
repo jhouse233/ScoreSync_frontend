@@ -1,0 +1,11 @@
+.black__key {
+    position: absolute;
+    z-index: 2;
+    pointer-events: auto;
+}
+
+.black__key--selected {
+    box-shadow: 0 0 8px 2px #f7f7f7;
+    border: 2px solid #f7f7f7;
+    z-index: 3;
+}

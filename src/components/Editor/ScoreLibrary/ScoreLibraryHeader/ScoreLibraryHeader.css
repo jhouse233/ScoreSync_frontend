@@ -1,0 +1,10 @@
+
+.scorelibrary-header__title {
+    /* width: 100%; */
+    width: 100%;
+    height: 200px;
+    color: black;
+    font-family: 'Oswald', sans-serif;
+    font-size: 40px;
+    border-bottom: 1px solid black;
+}

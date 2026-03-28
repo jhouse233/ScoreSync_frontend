@@ -1,0 +1,40 @@
+.sidebar__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 999;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.sidebar__panel {
+    width: 340px;
+    max-width: 90vw;
+    height: 100vh;
+    background: #101926;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -20px 0 40px rgba(0, 0, 0, 0.35);
+    outline: none;
+}
+
+.sidebar__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar__title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.sidebar__close-button {
+    padding: 12px 16px;
+    overflow: auto;
+    flex: 1;
+}
